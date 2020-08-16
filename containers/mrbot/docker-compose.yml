@@ -1,0 +1,50 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+networks:
+  mrbot-net:
+    driver: bridge
+
+services:
+  bot:
+    image: ${C_REPO:-cosandr}:mrbot
+    build:
+      context: .
+      dockerfile: bot.Dockerfile
+    container_name: mrbot
+    networks:
+      - mrbot-net
+    environment: *default-env
+    volumes:
+      - /run/postgresql:/run/postgresql
+      - ./data:/data
+      - ./src:/app
+      - ${C_WEB_ROOT}/discord:/upload
+    restart: "always"
+    depends_on:
+      - brains
+
+  brains:
+    image: ${C_REPO:-cosandr}:mrbot-brains
+    build:
+      context: .
+      dockerfile: brains.Dockerfile
+    container_name: mrbot-brains
+    networks:
+      - mrbot-net
+    environment:
+      <<: *default-env
+      DATA_PATH: /data
+      UPLOAD_PATH: /upload
+      UPLOAD_URL: "https://www.${C_DOMAIN}/discord"
+      LISTEN_ADDRESS: "0.0.0.0:7762"
+    expose:
+      - 7762
+    volumes:
+      - ./data:/data
+      - ./src-brains:/app
+      - ${C_WEB_ROOT}/discord:/upload
+    restart: "always"

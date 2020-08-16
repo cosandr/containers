@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  opencv-build:
+    image: ${C_REPO:-cosandr}:opencv-deb
+    build:
+      context: .
+      dockerfile: deb.Dockerfile
+      args:
+        OPENCV_VERSION: latest # 4.4.0
+        CMAKE_VERSION: latest # 3.14.1
+    container_name: opencv-build
+    network_mode: "bridge"
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: ${C_TZ}
+      PUID: ${C_UID}
+      PGID: ${C_GID}
+    volumes:
+      - ../mrbot/files/opencv:/data
+    restart: "no"

@@ -1,0 +1,6 @@
+[submodule "containers/mrbot/src"]
+	path = containers/mrbot/src
+	url = git@github.com:cosandr/mrbot.git
+[submodule "containers/mrbot/src-brains"]
+	path = containers/mrbot/src-brains
+	url = git@github.com:cosandr/mrbot-brains.git

@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  chromium-build:
+    image: ${C_REPO:-cosandr}:chromium-arch
+    build:
+      context: .
+      dockerfile: arch.Dockerfile
+    container_name: chromium-build
+    network_mode: "bridge"
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: ${C_TZ}
+      PUID: ${C_UID}
+      PGID: ${C_GID}
+    volumes:
+      - ./data:/data
+    restart: "no"

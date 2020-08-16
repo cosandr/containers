@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  tfbuild:
+    image: ${C_REPO:-cosandr}:tfbuild
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tfbuild
+    network_mode: "bridge"
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: ${C_TZ}
+      PUID: ${C_UID}
+      PGID: ${C_GID}
+    volumes:
+      - ./data:/data
+    restart: "no"

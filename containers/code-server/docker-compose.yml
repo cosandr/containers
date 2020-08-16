@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  vscode:
+    image: codercom/code-server:v2
+    container_name: code-server
+    network_mode: bridge
+    user: ${C_UID}:${G_UID}
+    environment:
+      - TZ=${C_TZ}
+      - VERSION=public
+    volumes:
+      - ./data:/home/coder/.local/share/code-server
+    ports:
+      - "127.0.0.1:8443:8080"
+    restart: "always"
