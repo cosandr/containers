@@ -4,9 +4,8 @@ x-env: &default-env
   PUID: ${C_UID}
   PGID: ${C_GID}
 
-networks:
-  mrbot-net:
-    driver: bridge
+volumes:
+  run-brains:
 
 services:
   bot:
@@ -15,11 +14,11 @@ services:
       context: .
       dockerfile: bot.Dockerfile
     container_name: mrbot
-    networks:
-      - mrbot-net
+    network_mode: "bridge"
     environment: *default-env
     volumes:
       - /run/postgresql:/run/postgresql
+      - run-brains:/run/app
       - ./data:/data
       - ./src:/app
       - ${C_WEB_ROOT}/discord:/upload
@@ -33,17 +32,15 @@ services:
       context: .
       dockerfile: brains.Dockerfile
     container_name: mrbot-brains
-    networks:
-      - mrbot-net
+    network_mode: "bridge"
     environment:
       <<: *default-env
       DATA_PATH: /data
       UPLOAD_PATH: /upload
       UPLOAD_URL: "https://www.${C_DOMAIN}/discord"
-      LISTEN_ADDRESS: "0.0.0.0:7762"
-    expose:
-      - 7762
+      LISTEN_ADDRESS: "/run/app/brains.sock"
     volumes:
+      - run-brains:/run/app
       - ./data:/data
       - ./src-brains:/app
       - ${C_WEB_ROOT}/discord:/upload

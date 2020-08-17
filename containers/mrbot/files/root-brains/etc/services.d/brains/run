@@ -3,4 +3,6 @@
 
 cd /app || exit
 
-exec s6-setuidgid abc python launcher.py --listen-address "$LISTEN_ADDRESS"
+exec s6-setuidgid abc python launcher.py \
+    --listen-address "$LISTEN_ADDRESS" \
+    --delete-sock
