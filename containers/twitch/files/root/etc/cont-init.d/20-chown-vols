@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+
+chown -R abc:abc /app
+chown -R abc:abc /downloads
+[[ -d /run/app ]] && chown -R abc:abc /run/app
+[[ -d "$ENC_PATH_DST" ]] && chown -R abc:abc "$ENC_PATH_DST"
+[[ -d "$GEN_PATH_DST" ]] && chown -R abc:abc "$GEN_PATH_DST"

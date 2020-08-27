@@ -2,6 +2,7 @@
 *.deb
 *.whl
 env.sh
+.env
 
 # Editor files
 .vscode/settings.json

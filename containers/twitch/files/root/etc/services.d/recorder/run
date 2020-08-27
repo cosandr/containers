@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+cd /app || exit
+
+# Remove REC_ prefix and unset REC_ vars
+for var in "${!REC_@}"; do
+    new_var="${var#REC_}"
+    echo "Setting $new_var=\"${!var}\""
+    export "$new_var"="${!var}"
+    unset "$var"
+done
+
+exec s6-setuidgid abc python launcher.py recorder

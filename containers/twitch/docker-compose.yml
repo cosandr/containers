@@ -1,0 +1,36 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  twitch:
+    image: ${C_REPO:-cosandr}:twitch
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: twitch
+    network_mode: "bridge"
+    environment:
+      <<: *default-env
+      USE_TCP: "true"
+      WEBHOOK_URL: ${TWITCH_WEBHOOK}
+      REC_STREAM_USER: RichardLewisReports
+      REC_CHECK_TIMEOUT: "120"
+      REC_TWITCH_ID: ${TWITCH_ID}
+      REC_PATH_DST: /downloads
+      ENC_PATH_SRC: /downloads
+      ENC_PATH_DST: ${C_MEDIA}/twitch
+      GEN_PATH_DST: ${C_WEB_ROOT}/clips
+      GEN_PATH_SRC1: "[clips]${C_MEDIA}/clips"
+      GEN_PATH_SRC2: "[rl]${C_MEDIA}/twitch/RichardLewisReports"
+      GEN_PG_URI: ${TWITCH_PG_URI}
+    volumes:
+      - ./src:/app
+      - /run/postgresql:/run/postgresql
+      - ${C_DOWNLOADS:?err}/twitch:/downloads
+      - ${C_MEDIA:?err}/twitch:${C_MEDIA}/twitch
+      - ${C_MEDIA}/clips:${C_MEDIA}/clips:ro
+      - ${C_WEB_ROOT:?err}/clips:${C_WEB_ROOT}/clips
+    restart: "always"

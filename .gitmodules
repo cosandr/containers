@@ -4,3 +4,6 @@
 [submodule "containers/mrbot/src-brains"]
 	path = containers/mrbot/src-brains
 	url = git@github.com:cosandr/mrbot-brains.git
+[submodule "containers/twitch/src"]
+	path = containers/twitch/src
+	url = git@github.com:cosandr/twitch-vods.git
