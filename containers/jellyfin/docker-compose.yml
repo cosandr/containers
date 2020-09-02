@@ -1,0 +1,24 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    network_mode: "bridge"
+    environment:
+      <<: *default-env
+      UMASK_SET: 022
+    volumes:
+      - ./data:/config
+      - ${C_MEDIA:?err}:/data/media
+    ports:
+      - "8096:8096/tcp" # HTTP
+      # - "1900:1900/udp" # Auto-discovery
+      # - "7359:7359/udp" # Auto-discovery
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
