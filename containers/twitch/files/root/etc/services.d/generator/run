@@ -2,12 +2,6 @@
 
 cd /app || exit
 
-# Remove GEN_ prefix and unset GEN_ vars
-for var in "${!GEN_@}"; do
-    new_var="${var#GEN_}"
-    echo "Setting $new_var=\"${!var}\""
-    export "$new_var"="${!var}"
-    unset "$var"
-done
+[[ ${START_GEN:-1} -eq 0 ]] && exit
 
-exec s6-setuidgid abc python launcher.py uuid
+exec s6-setuidgid abc python launcher.py $GLOBAL_ARGS generator $GEN_ARGS

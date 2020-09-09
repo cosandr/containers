@@ -14,18 +14,22 @@ services:
     network_mode: "bridge"
     environment:
       <<: *default-env
-      USE_TCP: "true"
-      WEBHOOK_URL: ${TWITCH_WEBHOOK}
-      REC_STREAM_USER: RichardLewisReports
-      REC_CHECK_TIMEOUT: "120"
-      REC_TWITCH_ID: ${TWITCH_ID}
-      REC_PATH_DST: /downloads
-      ENC_PATH_SRC: /downloads
-      ENC_PATH_DST: ${C_MEDIA}/twitch
-      GEN_PATH_DST: ${C_WEB_ROOT}/clips
-      GEN_PATH_SRC1: "[clips]${C_MEDIA}/clips"
-      GEN_PATH_SRC2: "[rl]${C_MEDIA}/twitch/RichardLewisReports"
-      GEN_PG_URI: ${TWITCH_PG_URI}
+      ENC_ARGS: '--copy_pattern by\s*the\s*numbers --copy_pattern_opt IGNORECASE --enable_cleaner'
+      ENC_LISTEN_ADDRESS: "127.0.0.1:3626"
+      ENC_OUT: ${C_MEDIA}/twitch
+      ENC_PATH: "http://127.0.0.1:3626"
+      ENC_SRC: /downloads
+      GEN_DST: ${C_WEB_ROOT}/clips
+      GEN_PG_URI: ${TWITCH_PG_URI:?err}
+      GEN_SRC1: "[clips]${C_MEDIA}/clips"
+      GEN_SRC2: "[rl]${C_MEDIA}/twitch/RichardLewisReports"
+#      GLOBAL_ARGS: "--no_notifications"
+      REC_OUT: /downloads
+      REC_TIMEOUT: "120"
+      REC_TWITCH_ID: ${TWITCH_ID:?err}
+      REC_USER: RichardLewisReports
+#      START_GEN: "0"
+      WEBHOOK_URL: ${TWITCH_WEBHOOK:?err}
     volumes:
       - ./src:/app
       - /run/postgresql:/run/postgresql

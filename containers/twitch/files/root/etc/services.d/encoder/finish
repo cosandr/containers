@@ -1,4 +1,4 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-[[ -S $LISTEN_ADDRESS ]] && rm -fv "$LISTEN_ADDRESS"
+[[ -S ENC_LISTEN_ADDRESS ]] && rm -fv "$ENC_LISTEN_ADDRESS"

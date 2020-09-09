@@ -2,12 +2,6 @@
 
 cd /app || exit
 
-# Remove REC_ prefix and unset REC_ vars
-for var in "${!REC_@}"; do
-    new_var="${var#REC_}"
-    echo "Setting $new_var=\"${!var}\""
-    export "$new_var"="${!var}"
-    unset "$var"
-done
+[[ ${START_REC:-1} -eq 0 ]] && exit
 
-exec s6-setuidgid abc python launcher.py recorder
+exec s6-setuidgid abc python launcher.py $GLOBAL_ARGS recorder $REC_ARGS
