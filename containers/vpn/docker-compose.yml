@@ -1,0 +1,108 @@
+version: "3.7"
+
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  vpn:
+    # https://haugene.github.io/docker-transmission-openvpn/
+    image: haugene/transmission-openvpn:latest
+    network_mode: "bridge"
+    container_name: vpn
+    cap_add:
+      - NET_ADMIN
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      <<: *default-env
+      CREATE_TUN_DEVICE: "true"
+      ENABLE_UFW: "true"
+      LOCAL_NETWORK: "${C_HOST_NET:?err}"
+      OPENVPN_CONFIG: "se.protonvpn.com.udp"
+      OPENVPN_OPTS: "--inactive 3600 --ping 10 --ping-exit 60"
+      OPENVPN_PASSWORD: "${OPENVPN_PASSWORD:?err}"
+      OPENVPN_PROVIDER: "ProtonVPN"
+      OPENVPN_USERNAME: "${OPENVPN_USERNAME:?err}"
+      TRANSMISSION_RATIO_LIMIT_ENABLED: "true"
+      TRANSMISSION_RATIO_LIMIT: "5"
+      TRANSMISSION_WEB_UI: "transmission-web-control"
+      UFW_EXTRA_PORTS: "9091,7878,8989,8686,5800"
+      WEBPROXY_ENABLED: "false"
+    volumes:
+      - ${C_DOWNLOADS:?err}/transmission:/data
+    ports:
+      - "5800:5800" # firefox
+      - "7878:7878" # radarr
+      - "8686:8686" # lidarr
+      - "8989:8989" # sonarr
+      - "9091:9091" # transmission
+    restart: "always"
+
+  radarr:
+    image: linuxserver/radarr:latest
+    network_mode: "service:vpn"
+    container_name: vpn-radarr
+    depends_on:
+      - vpn
+    environment:
+      <<: *default-env
+      UMASK_SET: "022"
+    volumes:
+      - ./data/radarr:/config
+      - ${C_DOWNLOADS:?err}/transmission:/data
+      - ${C_MEDIA:?err}/movies:/movies
+    restart: "always"
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    network_mode: "service:vpn"
+    container_name: vpn-sonarr
+    depends_on:
+      - vpn
+    environment:
+      <<: *default-env
+      UMASK_SET: "022"
+    volumes:
+      - ./data/sonarr:/config
+      - ${C_DOWNLOADS:?err}/transmission:/data
+      - ${C_MEDIA:?err}/shows:/shows
+    restart: "always"
+
+  lidarr:
+    image: linuxserver/lidarr:latest
+    network_mode: "service:vpn"
+    container_name: vpn-lidarr
+    depends_on:
+      - vpn
+    environment:
+      <<: *default-env
+      UMASK_SET: "022"
+    volumes:
+      - ./data/lidarr:/config
+      - ${C_DOWNLOADS:?err}/transmission:/data
+      - ${C_MEDIA:?err}/music:/music
+    restart: "always"
+
+  firefox:
+    image: jlesage/firefox:latest
+    network_mode: "service:vpn"
+    container_name: vpn-firefox
+    security_opt:
+      - seccomp=./seccomp.json
+    depends_on:
+      - vpn
+    environment:
+      TZ: ${C_TZ}
+      USER_ID: ${C_UID}
+      GROUP_ID: ${C_GID}
+      UMASK_SET: "027"
+      KEEP_APP_RUNNING: "1"
+      DISPLAY_WIDTH: "1280"
+      DISPLAY_HEIGHT: "1024"
+    shm_size: 2G
+    volumes:
+      - ./data/firefox:/config
+    restart: "always"

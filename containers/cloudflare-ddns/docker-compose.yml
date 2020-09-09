@@ -1,26 +1,25 @@
-version: "3"
+version: "3.7"
+
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
 
 services:
   an:
     image: joshava/cloudflare-ddns:latest
-    network_mode: bridge
+    network_mode: "bridge"
     container_name: ddns-an
-    environment:
-      - TZ=${C_TZ}
-      - PUID=${C_UID}
-      - PGID=${C_GID}
+    environment: *default-env
     volumes:
       - ./data/config-an.yaml:/app/config.yaml
     restart: "always"
 
   dv:
     image: joshava/cloudflare-ddns:latest
-    network_mode: bridge
+    network_mode: "bridge"
     container_name: ddns-dv
-    environment:
-      - TZ=${C_TZ}
-      - PUID=${C_UID}
-      - PGID=${C_GID}
+    environment: *default-env
     volumes:
       - ./data/config-dv.yaml:/app/config.yaml
     restart: "always"
