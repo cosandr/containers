@@ -1,0 +1,21 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: "host"
+    environment:
+      <<: *default-env
+      VERSION: "public"
+    volumes:
+      - ./data/config:/config
+      - ./data/transcode:/transcode
+      - ${C_MEDIA:?err}:${C_MEDIA}
+    devices:
+      - /dev/dri:/dev/dri
+    restart: "always"

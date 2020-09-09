@@ -1,0 +1,19 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    network_mode: "bridge"
+    environment: *default-env
+    volumes:
+      - ./data:/var/syncthing
+      - ${C_MEDIA:?err}/photo:/sync/photo
+    ports:
+      - "8384:8384"
+      - "2200:2200"
+    restart: "always"

@@ -7,25 +7,25 @@ services:
     network_mode: "bridge"
     user: ${C_UID}:${G_UID}
     environment:
-      - ADMIN_TOKEN=${C_BW_TOKEN}
-      - LOG_FILE=/data/bitwarden.log
-      - EXTENDED_LOGGING=true
-      - ROCKET_CLI_COLORS=off
-      - ROCKET_PORT=8343
-      - LOG_LEVEL=warn
-      - TZ=${C_TZ}
-      - SIGNUPS_ALLOWED=true
-      - WEBSOCKET_ENABLED=true
-      - SMTP_HOST=${C_SMTP_HOST}
-      - SMTP_FROM=bitwarden@${C_DOMAIN}
-      - SMTP_PORT=${C_SMTP_PORT}
-      - SMTP_SSL=true
-      - SMTP_USERNAME=${C_SMTP_USERNAME}
-      - SMTP_PASSWORD=${C_SMTP_PASSWORD}
-      - DOMAIN=https://bw.${C_DOMAIN}/
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?err}
+      DOMAIN: "https://bw.${C_DOMAIN}/"
+      EXTENDED_LOGGING: "true"
+      LOG_FILE: /data/bitwarden.log
+      LOG_LEVEL: warn
+      ROCKET_CLI_COLORS: "off"
+      ROCKET_PORT: "8343"
+      SIGNUPS_ALLOWED: "true"
+      SMTP_FROM: ${SMTP_FROM:?err}
+      SMTP_HOST: ${SMTP_HOST:?err}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:?err}
+      SMTP_PORT: ${SMTP_PORT:?err}
+      SMTP_SSL: "true"
+      SMTP_USERNAME: ${SMTP_USERNAME:?err}
+      TZ: ${C_TZ}
+      WEBSOCKET_ENABLED: "true"
     ports:
       - 8343:8343/tcp
       - 3012:3012/tcp
     volumes:
       - ./data:/data
-    restart: unless-stopped
+    restart: "always"
