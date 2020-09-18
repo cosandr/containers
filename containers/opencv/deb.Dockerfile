@@ -1,11 +1,15 @@
-FROM python:3.7-slim
+ARG PY_VER=3.7
+
+FROM python:${PY_VER}-slim
 
 ARG OPENCV_VERSION=latest
 ARG CMAKE_VERSION=latest
+ARG MAKE_PIP=0
 
 WORKDIR /root
 RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH" \
+    MAKE_PIP=${MAKE_PIP}
 COPY files/download.sh /root/download.sh
 
 RUN apt-get update && \
