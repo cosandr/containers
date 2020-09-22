@@ -22,7 +22,7 @@ RUN python -m venv /opt/venv && \
 
 FROM base
 
-ARG OVERLAY_VERSION="v2.0.0.1"
+ARG OVERLAY_VERSION="v2.1.0.0"
 
 ADD https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VERSION}/s6-overlay-amd64.tar.gz /tmp/
 COPY files/opencv/* /tmp/opencv/
