@@ -15,7 +15,10 @@ services:
       dockerfile: bot.Dockerfile
     container_name: mrbot
     network_mode: "bridge"
-    environment: *default-env
+    environment:
+      <<: *default-env
+      CONFIG_DSN: ${CONFIG_DSN:?err}
+      LAUNCHER_ARGS: "psql-config --env -e docker"
     volumes:
       - /run/postgresql:/run/postgresql
       - run-brains:/run/app

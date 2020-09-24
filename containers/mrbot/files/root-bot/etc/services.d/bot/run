@@ -5,4 +5,4 @@ cd /app || exit
 abc_home=$(eval echo "~abc")
 export MPLCONFIGDIR="${abc_home}/.config/matplotlib"
 
-exec s6-setuidgid abc python launcher.py
+exec s6-setuidgid abc python launcher.py $LAUNCHER_ARGS
