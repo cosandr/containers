@@ -7,12 +7,13 @@ COPY src/requirements.txt /tmp/req.txt
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m venv /opt/venv && \
+    pip install -U pip wheel setuptools && \
     apt-get update && \
     apt-get upgrade -y && \
     echo 'apt: install deps' && \
-    apt-get -y install build-essential git && \
+    apt-get -y --no-install-recommends install build-essential git && \
     echo 'pip: install deps' && \
-    pip install --no-cache-dir -r /tmp/req.txt
+    pip install -r /tmp/req.txt
 
 FROM base
 

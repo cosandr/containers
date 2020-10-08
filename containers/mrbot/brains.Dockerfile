@@ -10,6 +10,7 @@ COPY files/${TF_FILE} /tmp/
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m venv /opt/venv && \
+    pip install -U pip wheel setuptools && \
     apt-get update && \
     apt-get upgrade -y && \
     echo 'apt: install deps' && \
@@ -17,8 +18,8 @@ RUN python -m venv /opt/venv && \
     echo 'pip: install deps' && \
     sed -i 's/^tensorflow.*//g' /tmp/req.txt && \
     sed -i 's/^opencv.*//g' /tmp/req.txt && \
-    pip install --no-cache-dir -r /tmp/req.txt && \
-    pip install --no-cache-dir tensorflow_hub /tmp/${TF_FILE}
+    pip install -r /tmp/req.txt && \
+    pip install tensorflow_hub /tmp/${TF_FILE}
 
 FROM base
 

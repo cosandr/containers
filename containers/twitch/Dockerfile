@@ -6,11 +6,11 @@ COPY src/requirements.txt /tmp/req.txt
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m venv /opt/venv && \
-    pip install -U pip setuptools wheel && \
+    pip install -U pip wheel setuptools && \
     apt-get update && \
     apt-get upgrade -y && \
     echo 'apt: install deps' && \
-    apt-get -y install build-essential && \
+    apt-get -y --no-install-recommends install build-essential && \
     pip install numpy && \
     pip install -r /tmp/req.txt
 

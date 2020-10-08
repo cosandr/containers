@@ -8,7 +8,7 @@ RUN pip install -U pip six numpy wheel mock 'future>=0.17.1' && \
     apt-get update && \
     apt-get upgrade -y && \
     echo 'apt: install deps' && \
-    apt-get -y install build-essential git pkg-config zip zlib1g-dev unzip curl
+    apt-get -y --no-install-recommends install build-essential git pkg-config zip zlib1g-dev unzip curl
 
 COPY files/download.sh /root/download.sh
 

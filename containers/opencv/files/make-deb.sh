@@ -12,9 +12,7 @@ if [[ $MAKE_PIP == "1" ]]; then
 
     pip wheel . --verbose
 
-    rm -fv /data/*.whl
-
-    cp -v /root/opencv/*.whl /data/
+    cp -fv /root/opencv/*.whl /data/
 
     PUID=${PUID:-1000}
     PGID=${PGID:-1000}
