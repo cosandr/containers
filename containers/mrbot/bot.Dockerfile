@@ -13,11 +13,11 @@ RUN python -m venv /opt/venv && \
     echo 'apt: install deps' && \
     apt-get -y --no-install-recommends install build-essential git && \
     echo 'pip: install deps' && \
-    pip install -r /tmp/req.txt
+    pip install --use-feature=2020-resolver -r /tmp/req.txt
 
 FROM base
 
-ARG OVERLAY_VERSION="v2.1.0.0"
+ARG OVERLAY_VERSION="v2.1.0.2"
 
 ADD https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VERSION}/s6-overlay-amd64.tar.gz /tmp/
 COPY --from=builder /opt/venv /opt/venv
