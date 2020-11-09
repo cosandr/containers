@@ -6,15 +6,15 @@ x-env: &default-env
   PGID: ${C_GID}
 
 services:
-  tfbuild:
-    image: ${C_REPO:-cosandr}:tfbuild
+  tfbuild-gpu:
+    image: ${C_REPO:-cosandr}:tfbuild-gpu
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: gpu1.Dockerfile
       args:
-        PY_VER: 3.8
-        # TF_VERSION: v1.15.4
-        TF_VERSION: v1.14.0
+        PY_VER: 3.7
+        TF_VERSION: v1.15.4
+        # TF_VERSION: v1.14.0
         USE_TF_PIP: 0
     container_name: tfbuild
     network_mode: "bridge"
@@ -23,5 +23,5 @@ services:
     environment: *default-env
     volumes:
       - ./data:/data
-      - ./files/make.sh:/src/make.sh
+      - ./files/make-gpu.sh:/src/make.sh
     restart: "no"

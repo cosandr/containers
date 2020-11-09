@@ -7,3 +7,6 @@
 [submodule "containers/twitch/src"]
 	path = containers/twitch/src
 	url = git@github.com:cosandr/twitch-vods.git
+[submodule "containers/tfbuild/src"]
+	path = containers/tfbuild/src
+	url = https://github.com/tensorflow/tensorflow.git

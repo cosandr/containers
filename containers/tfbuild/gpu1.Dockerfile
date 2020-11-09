@@ -1,6 +1,22 @@
-ARG UBUNTU_VERSION=18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 
-FROM ubuntu:${UBUNTU_VERSION}
+# In the Ubuntu 16.04 images, cudnn is placed in system paths. Move them to
+# /usr/local/cuda
+RUN cp -P /usr/include/cudnn.h /usr/local/cuda/include && \
+    cp -P /usr/lib/x86_64-linux-gnu/libcudnn* /usr/local/cuda/lib64
+
+# Installs TensorRT, which is not included in NVIDIA Docker containers.
+RUN apt-get update && \
+    apt-get install nvinfer-runtime-trt-repo-ubuntu1604-5.0.2-ga-cuda10.0 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libnvinfer-dev=5.1.5-1+cuda10.0 \
+        libnvinfer5=5.1.5-1+cuda10.0
+
+# Link NCCL libray and header where the build script expects them.
+RUN mkdir /usr/local/cuda/lib &&  \
+    ln -s /usr/lib/x86_64-linux-gnu/libnccl.so.2 /usr/local/cuda/lib/libnccl.so.2 && \
+    ln -s /usr/include/nccl.h /usr/local/cuda/include/nccl.h
 
 ARG TF_VERSION=v1.15.4
 ENV TF_VERSION=${TF_VERSION}
@@ -42,7 +58,7 @@ RUN echo '\t*** install PIP deps ***' && \
 # Set up the master bazelrc configuration file.
 COPY src/tensorflow/tools/ci_build/install/.bazelrc /etc/bazel.bazelrc
 
-COPY files/make.sh /src/make.sh
+COPY files/make-gpu.sh /src/make.sh
 
 WORKDIR /src
 CMD [ "bash" ]

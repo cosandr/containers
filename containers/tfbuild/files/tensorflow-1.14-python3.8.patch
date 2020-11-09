@@ -1,0 +1,66 @@
+diff --git a/tensorflow/python/eager/pywrap_tfe_src.cc b/tensorflow/python/eager/pywrap_tfe_src.cc
+index 7993abc7e6..8991ad7dd7 100644
+--- a/tensorflow/python/eager/pywrap_tfe_src.cc
++++ b/tensorflow/python/eager/pywrap_tfe_src.cc
+@@ -1268,7 +1268,7 @@ static PyTypeObject TFE_Py_Tape_Type = {
+     sizeof(TFE_Py_Tape),                          /* tp_basicsize */
+     0,                                            /* tp_itemsize */
+     &TFE_Py_Tape_Delete,                          /* tp_dealloc */
+-    nullptr,                                      /* tp_print */
++    0,                                            /* tp_print */
+     nullptr,                                      /* tp_getattr */
+     nullptr,                                      /* tp_setattr */
+     nullptr,                                      /* tp_reserved */
+diff --git a/tensorflow/python/lib/core/bfloat16.cc b/tensorflow/python/lib/core/bfloat16.cc
+index fde3a83770..54be76375c 100644
+--- a/tensorflow/python/lib/core/bfloat16.cc
++++ b/tensorflow/python/lib/core/bfloat16.cc
+@@ -317,7 +317,7 @@ PyTypeObject PyBfloat16_Type = {
+     sizeof(PyBfloat16),                        // tp_basicsize
+     0,                                         // tp_itemsize
+     nullptr,                                   // tp_dealloc
+-    nullptr,                                   // tp_print
++    0,                                         // tp_print
+     nullptr,                                   // tp_getattr
+     nullptr,                                   // tp_setattr
+     nullptr,                                   // tp_compare / tp_reserved
+diff --git a/tensorflow/python/lib/core/ndarray_tensor_bridge.cc b/tensorflow/python/lib/core/ndarray_tensor_bridge.cc
+index bf584bc1b9..0bfd23b9c5 100644
+--- a/tensorflow/python/lib/core/ndarray_tensor_bridge.cc
++++ b/tensorflow/python/lib/core/ndarray_tensor_bridge.cc
+@@ -86,7 +86,7 @@ PyTypeObject TensorReleaserType = {
+     0,                                /* tp_itemsize */
+     /* methods */
+     TensorReleaser_dealloc,      /* tp_dealloc */
+-    nullptr,                     /* tp_print */
++    0,                           /* tp_print */
+     nullptr,                     /* tp_getattr */
+     nullptr,                     /* tp_setattr */
+     nullptr,                     /* tp_compare */
+diff --git a/tensorflow/python/platform/tf_logging.py b/tensorflow/python/platform/tf_logging.py
+index 86a4957c9d..7c307b1f0a 100644
+--- a/tensorflow/python/platform/tf_logging.py
++++ b/tensorflow/python/platform/tf_logging.py
+@@ -57,9 +57,19 @@ def _get_caller(offset=3):
+     f = f.f_back
+   return None, None
+ 
+-
+-# The definition of `findCaller` changed in Python 3.2
+-if _sys.version_info.major >= 3 and _sys.version_info.minor >= 2:
++# The definition of `findCaller` changed in Python 3.2,
++# and further changed in Python 3.8
++if _sys.version_info.major >= 3 and _sys.version_info.minor >= 8:
++  def _logger_find_caller(stack_info=False, stacklevel=1):  # pylint: disable=g-wrong-blank-lines
++    code, frame = _get_caller(4)
++    sinfo = None
++    if stack_info:
++      sinfo = '\n'.join(_traceback.format_stack())
++    if code:
++      return (code.co_filename, frame.f_lineno, code.co_name, sinfo)
++    else:
++      return '(unknown file)', 0, '(unknown function)', sinfo
++elif _sys.version_info.major >= 3 and _sys.version_info.minor >= 2:
+   def _logger_find_caller(stack_info=False):  # pylint: disable=g-wrong-blank-lines
+     code, frame = _get_caller(4)
+     sinfo = None
