@@ -1,21 +1,24 @@
-FROM python:3.8-slim as base
+ARG PY_VER=3.8
+FROM python:${PY_VER} as builder
 
-FROM base as builder
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    echo 'apt: install deps' && \
+    apt-get -qq install build-essential git pkg-config libhdf5-103 libhdf5-dev
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PIP_ARGS="-i https://www.dresrv.com/pip --extra-index-url https://pypi.org/simple"
 
 COPY src/requirements.txt /tmp/req.txt
 
-ENV PATH="/opt/venv/bin:$PATH"
-
 RUN python -m venv /opt/venv && \
     pip install -U pip wheel setuptools && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    echo 'apt: install deps' && \
-    apt-get -y --no-install-recommends install build-essential git && \
     echo 'pip: install deps' && \
-    pip install --use-feature=2020-resolver -r /tmp/req.txt
+    pip install --use-feature=2020-resolver ${PIP_ARGS} -r /tmp/req.txt
 
-FROM base
+FROM python:${PY_VER}-slim
 
 ARG OVERLAY_VERSION="v2.1.0.2"
 
@@ -23,15 +26,15 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VE
 COPY --from=builder /opt/venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH" \
-LANGUAGE="en_US.UTF-8" \
-LANG="en_US.UTF-8" \
-TERM="xterm" \
-PYTHONUNBUFFERED="1"
+    LANGUAGE="en_US.UTF-8" \
+    LANG="en_US.UTF-8" \
+    TERM="xterm" \
+    PYTHONUNBUFFERED="1"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     echo '**** apt: install deps ****' && \
-    apt-get -y --no-install-recommends install \
+    DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         sudo locales texlive dvipng libffi-dev libnacl-dev libopus-dev ffmpeg && \
     echo '**** S6: Install ****' && \
     tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \

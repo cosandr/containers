@@ -1,47 +1,44 @@
-FROM python:3.7-slim as base
+ARG PY_VER=3.7
+FROM python:${PY_VER} as builder
 
-FROM base as builder
+ENV DEBIAN_FRONTEND="noninteractive"
 
-ARG TF_FILE=tensorflow-1.14.0-cp37-cp37m-linux_x86_64.whl
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    echo 'apt: install deps' && \
+    apt-get -qq install build-essential git pkg-config libhdf5-103 libhdf5-dev
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PIP_ARGS="-i https://www.dresrv.com/pip --extra-index-url https://pypi.org/simple"
 
 COPY src-brains/requirements.txt /tmp/req.txt
-COPY files/${TF_FILE} /tmp/
-
-ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m venv /opt/venv && \
     pip install -U pip wheel setuptools && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    echo 'apt: install deps' && \
-    apt-get -y --no-install-recommends install build-essential git && \
     echo 'pip: install deps' && \
-    sed -i 's/^tensorflow.*//g' /tmp/req.txt && \
     sed -i 's/^opencv.*//g' /tmp/req.txt && \
-    pip install --use-feature=2020-resolver -r /tmp/req.txt && \
-    pip install --use-feature=2020-resolver tensorflow_hub /tmp/${TF_FILE}
+    pip install --use-feature=2020-resolver ${PIP_ARGS} -r /tmp/req.txt && \
+    pip install --use-feature=2020-resolver -i https://www.dresrv.com/pip \
+        opencv-python-headless
 
-FROM base
+FROM python:${PY_VER}-slim
 
 ARG OVERLAY_VERSION="v2.1.0.2"
 
 ADD https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VERSION}/s6-overlay-amd64.tar.gz /tmp/
-COPY files/opencv/* /tmp/opencv/
 COPY --from=builder /opt/venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH" \
-LANGUAGE="en_US.UTF-8" \
-LANG="en_US.UTF-8" \
-TERM="xterm" \
-PYTHONUNBUFFERED="1"
+    LANGUAGE="en_US.UTF-8" \
+    LANG="en_US.UTF-8" \
+    TERM="xterm" \
+    PYTHONUNBUFFERED="1"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     echo '**** apt: install deps ****' && \
-    apt-get -y --no-install-recommends install sudo locales ffmpeg tar && \
-    echo '**** OpenCV: Install ****' && \
-    dpkg -i --force-depends /tmp/opencv/*.deb && \
-    apt-get install -y -f --no-install-recommends && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
+        sudo locales ffmpeg tar libilmbase-dev libopenexr-dev && \
     echo '**** S6: Install ****' && \
     tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     echo '**** user: Create abc user and group ****' && \

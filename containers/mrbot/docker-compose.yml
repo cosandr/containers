@@ -13,6 +13,8 @@ services:
     build:
       context: .
       dockerfile: bot.Dockerfile
+      args:
+        PY_VER: 3.9
     container_name: mrbot
     network_mode: "bridge"
     environment:
@@ -34,6 +36,8 @@ services:
     build:
       context: .
       dockerfile: brains.Dockerfile
+      args:
+        PY_VER: 3.8
     container_name: mrbot-brains
     network_mode: "bridge"
     environment:
