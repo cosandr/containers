@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Promscale maintenance
+Requires=network.target docker.service
+After=network.target docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker exec promscale-db psql -U postgres -d timescale -c 'CALL prom_api.execute_maintenance();'
+
+[Install]
+WantedBy=multi-user.target

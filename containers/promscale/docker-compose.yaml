@@ -1,0 +1,46 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+networks:
+  promscale-net:
+    driver: bridge
+    name: promscale-net
+
+services:
+  db:
+    image: timescaledev/promscale-extension:latest-pg12
+    container_name: promscale-db
+    user: ${C_UID}:${C_GID}
+    networks:
+      - promscale-net
+    environment:
+      <<: *default-env
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: timescale
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - /etc/passwd:/etc/passwd:ro
+    restart: "always"
+    expose:
+      - "5432"
+
+  promscale:
+    image: timescale/promscale:latest
+    container_name: promscale
+    networks:
+      - promscale-net
+    depends_on:
+      - db
+    environment:
+      <<: *default-env
+      TS_PROM_DB_HOST: db
+      TS_PROM_DB_PASSWORD: postgres
+      TS_PROM_DB_SSL_MODE: allow
+      TS_PROM_LOG_LEVEL: "info"
+    restart: "always"
+    ports:
+      - "127.0.0.1:9201:9201"
