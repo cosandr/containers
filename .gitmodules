@@ -1,12 +1,12 @@
-[submodule "containers/mrbot/src"]
-	path = containers/mrbot/src
+[submodule "mrbot/src"]
+	path = mrbot/src
 	url = git@github.com:cosandr/mrbot.git
-[submodule "containers/mrbot/src-brains"]
-	path = containers/mrbot/src-brains
+[submodule "mrbot/src-brains"]
+	path = mrbot/src-brains
 	url = git@github.com:cosandr/mrbot-brains.git
-[submodule "containers/twitch/src"]
-	path = containers/twitch/src
+[submodule "twitch/src"]
+	path = twitch/src
 	url = git@github.com:cosandr/twitch-vods.git
-[submodule "containers/tfbuild/src"]
-	path = containers/tfbuild/src
+[submodule "tfbuild/src"]
+	path = tfbuild/src
 	url = https://github.com/tensorflow/tensorflow.git
