@@ -14,6 +14,7 @@ services:
     network_mode: "bridge"
     environment:
       <<: *default-env
+      BUSY_FILE: "/data/busy"
       ENC_ARGS: '--copy_pattern (by\s*the\s*numbers|no\s*major\W?s\s*club|i\s*hate\s*it\s*here) --copy_pattern_opt IGNORECASE --enable_cleaner'
       ENC_LISTEN_ADDRESS: "127.0.0.1:3626"
       ENC_OUT: ${C_MEDIA}/twitch
@@ -23,7 +24,7 @@ services:
       GEN_PG_URI: ${TWITCH_PG_URI:?err}
       GEN_SRC1: "[clips]${C_MEDIA}/clips"
       GEN_SRC2: "[rl]${C_MEDIA}/twitch/RichardLewisReports"
-#      GLOBAL_ARGS: "--no_notifications"
+      # GLOBAL_ARGS: "--no_notifications"
       REC_OUT: /downloads
       REC_TIMEOUT: "120"
       REC_TWITCH_ID: ${TWITCH_ID:?err}
@@ -32,6 +33,7 @@ services:
       WEBHOOK_URL: ${TWITCH_WEBHOOK:?err}
     volumes:
       - ./src:/app
+      - ./data:/data
       - /run/postgresql:/run/postgresql
       - ${C_DOWNLOADS:?err}/twitch:/downloads
       - ${C_MEDIA:?err}/twitch:${C_MEDIA}/twitch

@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+[[ -f $BUSY_FILE ]] && rm -fv "$BUSY_FILE"

@@ -11,6 +11,7 @@ source env.sh || exit 1
 base_dir="$(pwd -P)"
 BUILD=${BUILD:-1}
 PULL=${PULL:-1}
+BUSY=${BUSY:-1}
 
 # key: folder name
 # value: space seperated list of services, starts all if empty
@@ -37,6 +38,11 @@ for name in "${!containers[@]}"; do
     fi
     if ! cd "$svc_path"; then
         ex_code=2
+        continue
+    fi
+    # Check for busy file
+    if [[ $BUSY -eq 1 && -f ./data/busy ]]; then
+        echo "$name is busy, skipping"
         continue
     fi
     if ! grep -qP '^\s+build:.*' docker-compose.yml; then
