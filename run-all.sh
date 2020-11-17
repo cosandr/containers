@@ -63,4 +63,7 @@ for name in "${!containers[@]}"; do
     ex_code=$(( $? > ex_code ? $? : ex_code ))
 done
 
+docker container prune --force
+docker network prune --force
+
 exit $ex_code

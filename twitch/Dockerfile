@@ -1,9 +1,11 @@
-FROM python:3.8-slim as base
+ARG PY_VER=3.8
+FROM python:${PY_VER}-slim as base
 
 FROM base as builder
 
 COPY src/requirements.txt /tmp/req.txt
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH" \
+    PIP_ARGS="-i https://www.dresrv.com/pip --extra-index-url https://pypi.org/simple"
 
 RUN python -m venv /opt/venv && \
     pip install -U pip wheel setuptools && \
@@ -12,7 +14,7 @@ RUN python -m venv /opt/venv && \
     echo 'apt: install deps' && \
     apt-get -y --no-install-recommends install build-essential && \
     pip install numpy && \
-    pip install --use-feature=2020-resolver -r /tmp/req.txt
+    pip install --use-feature=2020-resolver ${PIP_ARGS} -r /tmp/req.txt
 
 FROM base
 

@@ -10,6 +10,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PY_VER: 3.9
     container_name: twitch
     network_mode: "bridge"
     environment:

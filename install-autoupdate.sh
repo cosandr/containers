@@ -29,7 +29,8 @@ Requires=network.target docker.service
 [Service]
 Type=oneshot
 WorkingDirectory=$(pwd -P)
-Environment=BUILD=0
+Environment=BUSY=1
+Environment=BUILD=1
 Environment=PULL=1
 ExecStart=/usr/bin/bash run-all.sh
 EOF
