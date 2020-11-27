@@ -1,37 +1,20 @@
 version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
 
 services:
   nextcloud:
-    image: nextcloud:latest
+    image: ghcr.io/linuxserver/nextcloud
     network_mode: "bridge"
     container_name: nextcloud
-    hostname: cloud.${C_DOMAIN}
-    # user: ${C_UID}:${C_GID}
-    # sysctls:
-    #   - net.ipv4.ip_unprivileged_port_start=0
-    environment:
-      # APACHE_RUN_GROUP: "#${C_GID}"
-      # APACHE_RUN_USER: "#${C_UID}"
-      APACHE_DISABLE_REWRITE_IP: "1"
-      TRUSTED_PROXIES: "localhost"
-      MAIL_DOMAIN: ${C_DOMAIN}
-      MAIL_FROM_ADDRESS: nextcloud
-      POSTGRES_DB: nextcloud
-      POSTGRES_HOST: /run/postgresql
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
-      POSTGRES_USER: nextcloud
-      SMTP_HOST: ${SMTP_HOST:?err}
-      SMTP_NAME: ${SMTP_USERNAME:?err}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:?err}
-      SMTP_PORT: ${SMTP_PORT:?err}
-      SMTP_SECURE: ssl
-      TZ: ${C_TZ}
+    hostname: cloud.${C_DOMAIN:?err}
+    environment: *default-env
     volumes:
       - /run/postgresql:/run/postgresql
-      - ./data/main:/var/www/html
-      - ./data/data:/var/www/html/data
-      - ./data/config:/var/www/html/config
-      - ./data/custom_apps:/var/www/html/custom_apps
+      - ./data/data:/data
+      - ./data/config:/config
     ports:
-      - "25683:80"
+      - "25683:443"
     restart: "always"
