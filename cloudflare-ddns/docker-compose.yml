@@ -8,7 +8,7 @@ x-env: &default-env
 services:
   an:
     image: joshava/cloudflare-ddns:latest
-    network_mode: "bridge"
+    network_mode: "host"
     container_name: ddns-an
     environment: *default-env
     volumes:
@@ -17,7 +17,7 @@ services:
 
   dv:
     image: joshava/cloudflare-ddns:latest
-    network_mode: "bridge"
+    network_mode: "host"
     container_name: ddns-dv
     environment: *default-env
     volumes:

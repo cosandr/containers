@@ -15,5 +15,5 @@ services:
       - ${C_MEDIA:?err}/photo:/sync/photo
     ports:
       - "8384:8384"
-      - "2200:2200"
+      - "22000:22000"
     restart: "always"
