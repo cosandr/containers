@@ -22,6 +22,7 @@ declare -A containers=(
     ["nextcloud"]=""
     ["plex"]=""
     ["syncthing"]=""
+    ["standard-notes"]=""
     ["twitch"]=""
     ["vpn"]="vpn firefox sonarr"
 )

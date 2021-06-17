@@ -16,5 +16,5 @@ services:
       - ./data/data:/data
       - ./data/config:/config
     ports:
-      - "25683:443"
+      - "127.0.0.1:25683:443"
     restart: "always"
