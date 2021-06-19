@@ -1,4 +1,4 @@
-ARG PY_VER=3.8
+ARG PY_VER=3.9
 FROM python:${PY_VER}-slim as base
 
 FROM base as builder
