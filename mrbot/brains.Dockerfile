@@ -17,8 +17,8 @@ RUN python -m venv /opt/venv && \
     pip install -U pip wheel setuptools && \
     echo 'pip: install deps' && \
     sed -i 's/^opencv.*//g' /tmp/req.txt && \
-    pip install --use-feature=2020-resolver ${PIP_ARGS} -r /tmp/req.txt && \
-    pip install --use-feature=2020-resolver -i https://www.dresrv.com/pip \
+    pip install ${PIP_ARGS} -r /tmp/req.txt && \
+    pip install -i https://www.dresrv.com/pip \
         opencv-python-headless
 
 FROM python:${PY_VER}-slim

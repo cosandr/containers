@@ -16,7 +16,7 @@ ENV PATH="/opt/venv/bin:$PATH" \
 RUN python -m venv /opt/venv && \
     pip install -U pip wheel setuptools && \
     echo 'pip: install deps' && \
-    pip install --use-feature=2020-resolver ${PIP_ARGS} -U 'numpy<1.19' pillow
+    pip install ${PIP_ARGS} -U 'numpy<1.19' pillow
 
 ARG OPENCV_VERSION=latest
 ARG CMAKE_VERSION=latest

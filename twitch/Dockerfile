@@ -14,7 +14,7 @@ RUN python -m venv /opt/venv && \
     echo 'apt: install deps' && \
     apt-get -y --no-install-recommends install build-essential && \
     pip install numpy && \
-    pip install --use-feature=2020-resolver ${PIP_ARGS} -r /tmp/req.txt
+    pip install ${PIP_ARGS} -r /tmp/req.txt
 
 FROM base
 
