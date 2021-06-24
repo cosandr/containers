@@ -24,6 +24,7 @@ declare -A containers=(
     ["syncthing"]=""
     ["standard-notes"]=""
     ["twitch"]=""
+    ["gitlab"]=""
     ["vpn"]="vpn firefox sonarr"
 )
 
