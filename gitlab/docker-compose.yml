@@ -1,6 +1,28 @@
 version: '3'
 
 services:
+  # export TOKEN=""
+  # docker run --rm -v $PWD/data/runner:/etc/gitlab-runner gitlab/gitlab-runner register \
+  #   --non-interactive \
+  #   --executor "docker" \
+  #   --docker-image alpine:latest \
+  #   --url "https://gitlab.${C_DOMAIN}" \
+  #   --registration-token "$TOKEN" \
+  #   --description "docker-runner" \
+  #   --tag-list "docker" \
+  #   --run-untagged="true" \
+  #   --locked="false" \
+  #   --access-level="not_protected"
+  runner:
+    image: "gitlab/gitlab-runner:latest"
+    restart: "always"
+    network_mode: "bridge"
+    environment:
+      TZ: "${C_TZ:-UTC}"
+    volumes:
+      - "./data/runner:/etc/gitlab-runner"
+      - "/run/docker.sock:/var/run/docker.sock"
+
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
     restart: always
