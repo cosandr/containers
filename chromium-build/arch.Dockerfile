@@ -1,4 +1,4 @@
-FROM archlinux/base
+FROM archlinux:base
 
 RUN pacman --noconfirm --needed -Syu sudo base-devel git && \
     echo 'makepkg config: march=native' && \
