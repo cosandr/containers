@@ -7,7 +7,7 @@ x-env: &default-env
 
 services:
   tfbuild-gpu:
-    image: ${C_REPO:-cosandr}:tfbuild-gpu
+    image: ${C_REGISTRY_BASE:?err}/tfbuild:gpu
     build:
       context: .
       dockerfile: gpu1.Dockerfile

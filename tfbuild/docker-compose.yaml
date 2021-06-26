@@ -7,7 +7,7 @@ x-env: &default-env
 
 services:
   tfbuild:
-    image: ${C_REPO:-cosandr}:tfbuild
+    image: ${C_REGISTRY_BASE:?err}/tfbuild:latest
     build:
       context: .
       dockerfile: Dockerfile

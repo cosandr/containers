@@ -22,6 +22,7 @@ export C_DOMAIN="example.com"
 export C_DOWNLOADS="$HOME/Downloads"
 export C_MEDIA="$HOME/Videos"
 export C_WEB_ROOT="/var/www"
+export C_REGISTRY_BASE="registry.${C_DOMAIN}/cosandr/containers"
 
 primary_inet=$(route | grep '^default' | grep -m 1 -o '[^ ]*$')
 all_ips=$(ip -o addr show scope global "$primary_inet" | awk '{gsub(/\/.*/,"",$4); print $4}')

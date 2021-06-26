@@ -6,7 +6,7 @@ x-env: &default-env
 
 services:
   twitch:
-    image: ${C_REPO:-cosandr}:twitch
+    image: ${C_REGISTRY_BASE:?err}/twitch:latest
     build:
       context: .
       dockerfile: Dockerfile

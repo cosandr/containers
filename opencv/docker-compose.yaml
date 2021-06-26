@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   opencv-build:
-    image: ${C_REPO:-cosandr}:opencv-deb
+    image: ${C_REGISTRY_BASE:?err}/opencv-build:deb
     build:
       context: .
       dockerfile: deb.Dockerfile

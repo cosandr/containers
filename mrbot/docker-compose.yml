@@ -9,7 +9,7 @@ volumes:
 
 services:
   bot:
-    image: ${C_REPO:-cosandr}:mrbot
+    image: ${C_REGISTRY_BASE:?err}/mrbot:latest
     build:
       context: .
       dockerfile: bot.Dockerfile
@@ -33,7 +33,7 @@ services:
       - brains
 
   brains:
-    image: ${C_REPO:-cosandr}:mrbot-brains
+    image: ${C_REGISTRY_BASE:?err}/mrbot-brains:latest
     build:
       context: .
       dockerfile: brains.Dockerfile

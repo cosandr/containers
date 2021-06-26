@@ -7,7 +7,7 @@ x-env: &default-env
 
 services:
   chromium-build:
-    image: ${C_REPO:-cosandr}:chromium-arch
+    image: ${C_REGISTRY_BASE:?err}/chromium-build:arch
     build:
       context: .
       dockerfile: arch.Dockerfile
