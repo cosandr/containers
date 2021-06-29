@@ -4,4 +4,7 @@ cd /app || exit
 
 [[ ${START_REC:-1} -eq 0 ]] && exit
 
+# Workaround PermissionError: [Errno 13] Permission denied: '/root/.config/streamlink/config'
+export HOME=/home/abc
+
 exec s6-setuidgid abc python launcher.py $GLOBAL_ARGS recorder $REC_ARGS
