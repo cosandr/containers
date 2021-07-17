@@ -10,3 +10,6 @@
 [submodule "tfbuild/src"]
 	path = tfbuild/src
 	url = https://github.com/tensorflow/tensorflow.git
+[submodule "elk"]
+	path = elk
+	url = git@github.com:cosandr/docker-elk.git
