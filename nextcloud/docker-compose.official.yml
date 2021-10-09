@@ -24,7 +24,7 @@ services:
       SMTP_NAME: ${SMTP_USERNAME:?err}
       SMTP_PASSWORD: ${SMTP_PASSWORD:?err}
       SMTP_PORT: ${SMTP_PORT:?err}
-      SMTP_SECURE: ssl
+      SMTP_SECURE: tls
       TZ: ${C_TZ}
     volumes:
       - /run/postgresql:/run/postgresql

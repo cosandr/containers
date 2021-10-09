@@ -23,12 +23,13 @@ EOF
 cat <<EOF > "$systemd_path/$unit_name.service"
 [Unit]
 Description=Update all external Docker containers
-After=network.target docker.service
-Requires=network.target docker.service
+After=network-online.target docker.service
+Requires=network-online.target docker.service
 
 [Service]
 Type=oneshot
 WorkingDirectory=$(pwd -P)
+Environment=HOSTNAME=$(hostname)
 Environment=BUSY=1
 Environment=BUILD=1
 Environment=PULL=1

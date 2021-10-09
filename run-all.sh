@@ -21,8 +21,9 @@ declare -A containers=(
     ["mrbot"]=""
     ["nextcloud"]=""
     ["plex"]=""
+    ["elk"]=""
     ["syncthing"]=""
-    ["standard-notes"]=""
+    #["standard-notes"]=""
     ["twitch"]=""
     ["gitlab"]=""
     ["vpn"]="vpn firefox sonarr"
@@ -65,7 +66,7 @@ for name in "${!containers[@]}"; do
     ex_code=$(( $? > ex_code ? $? : ex_code ))
 done
 
-docker container prune --force
-docker network prune --force
+#docker container prune --force
+#docker network prune --force
 
 exit $ex_code
