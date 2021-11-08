@@ -9,8 +9,8 @@ services:
       args:
         PY_VER: 3.8
         MAKE_PIP: "1"
-        OPENCV_VERSION: latest # 4.4.0
-        CMAKE_VERSION: latest # 3.14.1
+        OPENCV_VERSION: 58 # 4.5.4.58
+        CMAKE_VERSION: v3.21.4
     container_name: opencv-build
     network_mode: "bridge"
     stdin_open: true

@@ -13,7 +13,7 @@ else
 fi
 
 if [[ $MAKE_PIP == "1" ]]; then
-    CV_REPO="skvark/opencv-python"
+    CV_REPO="opencv/opencv-python"
     GIT_ARGS="--recursive"
 else
     CV_REPO="opencv/opencv"
