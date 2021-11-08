@@ -12,7 +12,6 @@ services:
     hostname: cloud.${C_DOMAIN:?err}
     environment: *default-env
     volumes:
-      - /run/postgresql:/run/postgresql
       - ./data/data:/data
       - ./data/config:/config
     ports:

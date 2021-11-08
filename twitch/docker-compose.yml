@@ -23,7 +23,7 @@ services:
       ENC_PATH: "http://127.0.0.1:3626"
       ENC_SRC: /downloads
       GEN_DST: ${C_WEB_ROOT}/clips
-      GEN_PG_URI: ${TWITCH_PG_URI:?err}
+      GEN_PG_URI: "uuid_gen:${PG_PASS:?err}@${C_PG_HOST:?err}/web"
       GEN_SRC1: "[clips]${C_MEDIA}/clips"
       GEN_SRC2: "[rl]${C_MEDIA}/twitch/RichardLewisReports"
       # GLOBAL_ARGS: "--no_notifications"
@@ -36,7 +36,6 @@ services:
     volumes:
       - ./src:/app
       - ./data:/data
-      - /run/postgresql:/run/postgresql
       - ${C_DOWNLOADS:?err}/twitch:/downloads
       - ${C_MEDIA:?err}/twitch:${C_MEDIA}/twitch
       - ${C_MEDIA}/clips:${C_MEDIA}/clips:ro

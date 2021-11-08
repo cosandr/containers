@@ -20,10 +20,9 @@ services:
     environment:
       <<: *default-env
       BUSY_FILE: "/data/busy"
-      CONFIG_DSN: ${CONFIG_DSN:?err}
+      CONFIG_DSN: "postgres://discord:${PG_PASS:?err}@${C_PG_HOST:?err}/discord"
       LAUNCHER_ARGS: "psql-config --env -e docker"
     volumes:
-      - /run/postgresql:/run/postgresql
       - run-brains:/run/app
       - ./data:/data
       - ./src:/app

@@ -37,7 +37,7 @@ services:
         gitlab_rails['db_adapter'] = 'postgresql'
         gitlab_rails['db_database'] = 'gitlabhq_production'
         gitlab_rails['db_encoding'] = 'unicode'
-        gitlab_rails['db_host'] = '/run/postgresql'
+        gitlab_rails['db_host'] = '${C_PG_HOST:?err}'
         gitlab_rails['db_password'] = '${POSTGRES_PASSWORD:?err}'
         gitlab_rails['db_username'] = 'gitlab'
         gitlab_rails['gitlab_email_display_name'] = 'GitLab'
@@ -76,7 +76,6 @@ services:
       - '0.0.0.0:4523:22'      # SSH
       - '127.0.0.1:5000:4524'  # Registry
     volumes:
-      - /run/postgresql:/run/postgresql
       - './data/config:/etc/gitlab'
       - './data/logs:/var/log/gitlab'
       - './data/data:/var/opt/gitlab'

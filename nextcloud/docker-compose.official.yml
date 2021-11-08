@@ -17,7 +17,7 @@ services:
       MAIL_DOMAIN: ${C_DOMAIN}
       MAIL_FROM_ADDRESS: nextcloud
       POSTGRES_DB: nextcloud
-      POSTGRES_HOST: /run/postgresql
+      POSTGRES_HOST: "${C_PG_HOST:?err}"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
       POSTGRES_USER: nextcloud
       SMTP_HOST: ${SMTP_HOST:?err}
@@ -27,7 +27,6 @@ services:
       SMTP_SECURE: tls
       TZ: ${C_TZ}
     volumes:
-      - /run/postgresql:/run/postgresql
       - ./data/main:/var/www/html
       - ./data/data:/var/www/html/data
       - ./data/config:/var/www/html/config
