@@ -7,10 +7,10 @@ services:
       context: .
       dockerfile: deb.Dockerfile
       args:
-        PY_VER: 3.8
+        PY_VER: "3.8"
         MAKE_PIP: "1"
-        OPENCV_VERSION: 58 # 4.5.4.58
-        CMAKE_VERSION: v3.21.4
+        OPENCV_VERSION: "58" # 4.5.4.58
+        CMAKE_VERSION: "3.21.4"
     container_name: opencv-build
     network_mode: "bridge"
     stdin_open: true
