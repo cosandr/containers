@@ -16,6 +16,4 @@ services:
       - ./data/config:/config
       - ./data/transcode:/transcode
       - ${C_MEDIA:?err}:${C_MEDIA}
-    devices:
-      - /dev/dri:/dev/dri
     restart: "always"

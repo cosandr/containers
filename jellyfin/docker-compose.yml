@@ -20,6 +20,4 @@ services:
       - "8096:8096/tcp" # HTTP
       # - "1900:1900/udp" # Auto-discovery
       # - "7359:7359/udp" # Auto-discovery
-    devices:
-      - /dev/dri:/dev/dri
     restart: unless-stopped
