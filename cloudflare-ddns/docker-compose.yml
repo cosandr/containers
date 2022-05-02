@@ -6,15 +6,6 @@ x-env: &default-env
   PGID: ${C_GID}
 
 services:
-  an:
-    image: joshava/cloudflare-ddns:latest
-    network_mode: "host"
-    container_name: ddns-an
-    environment: *default-env
-    volumes:
-      - ./data/config-an.yaml:/app/config.yaml
-    restart: "always"
-
   dv:
     image: joshava/cloudflare-ddns:latest
     network_mode: "host"
