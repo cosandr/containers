@@ -19,13 +19,8 @@ declare -A containers=(
     ["cloudflare-ddns"]=""
     ["jellyfin"]=""
     ["mrbot"]=""
-    ["nextcloud"]=""
-    ["plex"]=""
     ["elk"]=""
     ["syncthing"]=""
-    #["standard-notes"]=""
-    ["twitch"]=""
-    ["gitlab"]=""
     ["vpn"]="vpn firefox sonarr"
 )
 
