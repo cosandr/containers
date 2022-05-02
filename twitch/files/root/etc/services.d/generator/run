@@ -3,5 +3,8 @@
 cd /app || exit
 
 [[ ${START_GEN:-1} -eq 0 ]] && exit
+abc_home=$(eval echo "~abc")
+export PGPASSFILE="${abc_home}/.pgpass"
+export HOME="${abc_home}"
 
 exec s6-setuidgid abc python launcher.py $GLOBAL_ARGS generator $GEN_ARGS
