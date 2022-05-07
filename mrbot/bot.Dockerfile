@@ -1,4 +1,4 @@
-ARG PY_VER=3.9
+ARG PY_VER=3.10
 FROM python:${PY_VER} as builder
 
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -8,8 +8,7 @@ RUN apt-get update && \
     echo 'apt: install deps' && \
     apt-get -qq install build-essential git pkg-config libhdf5-103 libhdf5-dev
 
-ENV PATH="/opt/venv/bin:$PATH" \
-    PIP_ARGS="-i https://www.dresrv.com/pip --extra-index-url https://pypi.org/simple"
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY src/requirements.txt /tmp/req.txt
 
