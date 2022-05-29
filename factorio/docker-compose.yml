@@ -1,0 +1,28 @@
+---
+
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  factorio:
+    container_name: factorio
+    hostname: ${HOSTNAME:?err}
+    network_mode: "bridge"
+    image: factoriotools/factorio:stable
+    ports:
+     - "34197:34197/udp"
+#     - "27015:27015/tcp"
+    volumes:
+     - ./data:/factorio
+     - ./server-settings.json:/server-settings.json
+    entrypoint: /bin/sh -c "mkdir -p /factorio/config && envsubst < /server-settings.json > /factorio/config/server-settings.json && exec /docker-entrypoint.sh"
+    environment:
+      <<: *default-env
+      GENERATE_NEW_SAVE: "false"
+      LOAD_LATEST_SAVE: "true"
+      INSTANCE_NAME: ${INSTANCE_NAME:?err}
+      INSTANCE_DESC: ${INSTANCE_DESC:?err}
+      INSTANCE_PASSWORD: ${INSTANCE_PASSWORD:?err}

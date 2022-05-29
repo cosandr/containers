@@ -23,6 +23,7 @@ declare -A containers=(
     ["elk"]=""
     ["syncthing"]=""
     ["vpn"]="vpn firefox sonarr"
+    ["factorio"]=""
 )
 
 ex_code=0
@@ -42,6 +43,10 @@ for name in "${!containers[@]}"; do
     # Check for busy file
     if [[ $BUSY -eq 1 && -f ./data/busy ]]; then
         echo "$name is busy, skipping"
+        continue
+    fi
+    if [[ $BUSY -eq 1 && -f ./data/.lock ]]; then
+        echo "$name is locked, skipping"
         continue
     fi
     if ! grep -qP '^\s+build:.*' docker-compose.yml; then
