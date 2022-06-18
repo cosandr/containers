@@ -21,7 +21,7 @@ services:
       CREATE_TUN_DEVICE: "true"
       ENABLE_UFW: "true"
       LOCAL_NETWORK: "${C_HOST_NET:?err}"
-      OPENVPN_CONFIG: "se-04.protonvpn.com.udp"
+      OPENVPN_CONFIG: "se.protonvpn.com.udp"
       OPENVPN_OPTS: "--inactive 3600 --ping 10 --ping-exit 60"
       OPENVPN_PASSWORD: "${OPENVPN_PASSWORD:?err}"
       OPENVPN_PROVIDER: "ProtonVPN"
