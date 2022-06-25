@@ -20,7 +20,6 @@ declare -A containers=(
     ["home-assistant"]=""
     ["jellyfin"]=""
     ["mrbot"]=""
-    ["elk"]=""
     ["syncthing"]=""
     ["vpn"]="vpn firefox sonarr"
     ["factorio"]=""
