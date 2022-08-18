@@ -17,7 +17,6 @@ BUSY=${BUSY:-1}
 # value: space seperated list of services, starts all if empty
 declare -A containers=(
     ["cloudflare-ddns"]=""
-    ["home-assistant"]=""
     ["jellyfin"]=""
     ["mrbot"]=""
     ["syncthing"]=""
