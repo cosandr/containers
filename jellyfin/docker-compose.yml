@@ -17,7 +17,7 @@ services:
       - ${C_MEDIA:?err}:/data/media
       - /tank/yes:/data/yes
     ports:
-      - "8096:8096/tcp" # HTTP
+      - "${C_HOST_IPV4:?err}:8096:8096/tcp" # HTTP
       # - "1900:1900/udp" # Auto-discovery
       # - "7359:7359/udp" # Auto-discovery
     restart: unless-stopped
