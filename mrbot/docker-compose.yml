@@ -4,8 +4,13 @@ x-env: &default-env
   PUID: ${C_UID}
   PGID: ${C_GID}
 
+networks:
+  mrbot:
+    driver: bridge
+
 volumes:
   run-brains:
+  web-data:
 
 services:
   bot:
@@ -16,7 +21,8 @@ services:
       args:
         PY_VER: "3.10"
     container_name: mrbot
-    network_mode: "bridge"
+    networks:
+      - mrbot
     environment:
       <<: *default-env
       BUSY_FILE: "/data/busy"
@@ -24,9 +30,9 @@ services:
       LAUNCHER_ARGS: "psql-config --env -e docker"
     volumes:
       - run-brains:/run/app
+      - web-data:/upload
       - ./data:/data
       - ./src:/app
-      - ${C_WEB_ROOT:?err}/discord:/upload
     restart: "always"
     depends_on:
       - brains
@@ -39,7 +45,8 @@ services:
       args:
         PY_VER: 3.8
     container_name: mrbot-brains
-    network_mode: "bridge"
+    networks:
+      - mrbot
     environment:
       <<: *default-env
       DATA_PATH: /data
@@ -48,7 +55,22 @@ services:
       LISTEN_ADDRESS: "/run/app/brains.sock"
     volumes:
       - run-brains:/run/app
+      - web-data:/upload
       - ./data:/data
       - ./src-brains:/app
-      - ${C_WEB_ROOT:?err}/discord:/upload
     restart: "always"
+
+  web:
+    image: ${C_REGISTRY_BASE:?err}/mrbot-web:latest
+    build:
+      context: nginx
+    container_name: mrbot-web
+    volumes:
+      - web-data:/usr/share/nginx/html
+    networks:
+      - mrbot
+    ports:
+      - "${C_HOST_IPV4:?err}:8001:80/tcp"
+    environment:
+      <<: *default-env
+      NGINX_PORT: 80
