@@ -16,11 +16,11 @@ BUSY=${BUSY:-1}
 # key: folder name
 # value: space seperated list of services, starts all if empty
 declare -A containers=(
-    ["cloudflare-ddns"]=""
+#    ["cloudflare-ddns"]=""
     ["jellyfin"]=""
     ["mrbot"]=""
     ["syncthing"]=""
-    ["vpn"]="vpn firefox sonarr"
+#    ["vpn"]="vpn firefox sonarr"
     ["factorio"]=""
 )
 
