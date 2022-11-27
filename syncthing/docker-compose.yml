@@ -4,18 +4,39 @@ x-env: &default-env
   PUID: ${C_UID}
   PGID: ${C_GID}
 
+networks:
+  syncthing:
+    driver: bridge
+
 services:
   syncthing:
     image: syncthing/syncthing:latest
     container_name: syncthing
-    network_mode: "bridge"
+    networks:
+      - syncthing
     environment: *default-env
     volumes:
       - ./data:/var/syncthing
       - ${C_MEDIA:?err}/photo:/sync/photo
     ports:
-      - "8384:8384"
-      - "22000:22000/tcp"
-      - "22000:22000/udp"
-      - "21027:21027/udp"
+      - "${C_HOST_IPV4:?err}:8384:8384"
+      - "${C_HOST_IPV4:?err}:22000:22000/tcp"
+      - "${C_HOST_IPV4:?err}:22000:22000/udp"
+      - "${C_HOST_IPV4:?err}:21027:21027/udp"
+    restart: "always"
+
+  syncthing_exporter:
+    image: f100024/syncthing_exporter:latest
+    container_name: syncthing_exporter
+    networks:
+      - syncthing
+    depends_on:
+      - syncthing
+    ports:
+      - "${C_HOST_IPV4:?err}:22093:9093/tcp"
+    environment:
+      <<: *default-env
+      SYNCTHING_URI: "http://syncthing:8384/"
+      SYNCTHING_TOKEN: "${SYNCTHING_TOKEN:?err}"
+      SYNCTHING_FOLDERSID: "ctkwt-teehm"
     restart: "always"
