@@ -5,6 +5,8 @@ x-env: &default-env
   PGID: ${C_GID}
 
 networks:
+  monitoring:
+    external: true
   syncthing:
     driver: bridge
 
@@ -30,6 +32,7 @@ services:
     container_name: syncthing_exporter
     networks:
       - syncthing
+      - monitoring
     depends_on:
       - syncthing
     ports:
@@ -40,3 +43,6 @@ services:
       SYNCTHING_TOKEN: "${SYNCTHING_TOKEN:?err}"
       SYNCTHING_FOLDERSID: "ctkwt-teehm"
     restart: "always"
+    labels:
+      - prometheus-instance="${C_HOSTNAME:?err}"
+      - prometheus-job=syncthing

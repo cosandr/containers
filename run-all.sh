@@ -22,6 +22,7 @@ declare -A containers=(
     ["syncthing"]=""
 #    ["vpn"]="vpn firefox sonarr"
     ["factorio"]=""
+    ["prometheus"]=""
 )
 
 ex_code=0

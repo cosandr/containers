@@ -15,6 +15,7 @@ while read -r line; do
     [[ -n $line ]] && unset "$line"
 done <<< "$(env | grep -oP '^C\_\w+')"
 
+export C_HOSTNAME="$(hostname -s | tr '[:upper:]' '[:lower:]')"
 export C_UID="$(id -u)"
 export C_GID="$(id -g)"
 export C_TZ="$(timedatectl --value show -p Timezone)"

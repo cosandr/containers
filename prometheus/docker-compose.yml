@@ -1,0 +1,57 @@
+---
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+
+networks:
+  monitoring:
+    name: monitoring
+    driver: bridge
+
+volumes:
+  prometheus-data: {}
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    # Needs access to the docker socket
+    user: root
+    environment: *default-env
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml.tmpl:ro
+      - prometheus-data:/prometheus
+      - /run/docker.sock:/run/docker.sock:ro
+    # https://github.com/prometheus/prometheus/issues/2357#issuecomment-368598151
+    entrypoint: /bin/sh
+    command:
+      - '-c'
+      - "sed s/'{{ prometheus_self_name }}'/${C_HOSTNAME:?err}/g /etc/prometheus/prometheus.yml.tmpl
+        > /etc/prometheus/prometheus.yml && /bin/prometheus
+        --log.level=info
+        --config.file=/etc/prometheus/prometheus.yml
+        --storage.tsdb.path=/prometheus
+        --storage.tsdb.retention.time=1d
+        --web.console.libraries=/usr/share/prometheus/console_libraries
+        --web.console.templates=/usr/share/prometheus/consoles"
+    ports:
+      - "${C_HOST_IPV4:?err}:9090:9090/tcp"
+    networks:
+      - monitoring
+    restart: always
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    networks:
+      - monitoring
+    command: '-docker_only'
+    volumes:
+      - /:/rootfs:ro
+      - /run:/run:rw
+      - /sys:/sys:ro
+      - /run/docker.sock:/run/docker.sock:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    labels:
+      - prometheus-instance="${C_HOSTNAME:?err}"
+      - prometheus-job=cadvisor
