@@ -37,5 +37,5 @@ unset primary_inet all_ips
 [[ -z $C_HOST_IPV6 ]] && unset C_HOST_IPV6
 
 # Print all
-env | grep --color=never 'C\_'
+env | grep --color=never -P '^C\_'
 ```
