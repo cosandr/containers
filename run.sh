@@ -9,7 +9,7 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
 fi
 
 OPTIONS=h,a,n,c:,e:
-LONGOPTS=help,all,dry-run,config-file:,env-file:,no-build,no-pull,no-busy,no-swarm
+LONGOPTS=help,all,dry-run,config-file:,env-file:,name:,no-build,no-pull,no-busy,no-swarm
 
 ! PARSED=$(getopt --options=${OPTIONS} --longoptions=${LONGOPTS} --name "$0" -- "$@")
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
@@ -33,6 +33,7 @@ SWARM=${SWARM:-$_swarm_default}
 RUN_ALL=${RUN_ALL:-0}
 CONFIG_FILE=${CONFIG_FILE:-"config.sh"}
 ENV_FILE=${ENV_FILE:-"env.sh"}
+NAMES=${NAMES:-}
 # key: folder name
 # value: space seperated list of services, starts all if empty
 declare -A containers=()
@@ -51,6 +52,7 @@ Options:
 -n    --dry-run         Don't make changes, print commands that would be run
 -c    --config-file     Path to config file [$CONFIG_FILE]
 -e    --env-file        Path to env file [$ENV_FILE]
+      --name            Provide comma seperated container names to operate on
       --no-build        Don't build images
       --no-pull         Don't pull updated images
       --no-busy         Ignore busy containers
@@ -78,6 +80,10 @@ while true; do
             ;;
         -e|--env-file)
             ENV_FILE="$2"
+            shift 2
+            ;;
+        --name)
+            NAMES="$2"
             shift 2
             ;;
         --no-build)
@@ -142,7 +148,7 @@ run_cmd() {
 find_all_containers() {
     local name
     # Reset array
-    declare -gA containers
+    declare -gA containers=()
     for file in */docker-compose.{yml,yaml}; do
         name="$(dirname "$file")"
         name="${name/#\.\//}"
@@ -154,6 +160,13 @@ find_all_containers() {
 run_common() {
     if [[ $RUN_ALL -eq 1 ]]; then
         find_all_containers
+    elif [[ -n $NAMES ]]; then
+        # Reset array
+        declare -gA containers=()
+        IFS=',' read -ra TMP_NAMES <<< "$NAMES"
+        for n in "${TMP_NAMES[@]}"; do
+            containers["$n"]=""
+        done
     fi
     if [[ ${#containers[@]} -eq 0 ]]; then
         echo "No containers found or configured"
