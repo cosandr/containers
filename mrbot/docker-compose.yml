@@ -6,7 +6,7 @@ x-env: &default-env
 
 networks:
   mrbot:
-    driver: bridge
+    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 volumes:
   run-brains:
@@ -69,7 +69,7 @@ services:
     networks:
       - mrbot
     ports:
-      - "${C_HOST_IPV4:?err}:8001:80/tcp"
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8001:80/tcp"
     environment:
       <<: *default-env
       NGINX_PORT: 80

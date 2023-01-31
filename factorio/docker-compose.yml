@@ -9,7 +9,7 @@ x-env: &default-env
 services:
   factorio:
     container_name: factorio
-    hostname: ${HOSTNAME:?err}
+    hostname: ${C_FACTORIO_NAME:-${C_HOSTNAME:?err}}
     network_mode: "bridge"
     image: factoriotools/factorio:stable
     ports:

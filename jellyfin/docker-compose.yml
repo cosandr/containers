@@ -15,9 +15,9 @@ services:
     volumes:
       - ./data:/config
       - ${C_MEDIA:?err}:/data/media
-      - /tank/yes:/data/yes
+      - ${C_MEDIA_YES:?err}:/data/yes
     ports:
-      - "${C_HOST_IPV4:?err}:8096:8096/tcp" # HTTP
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8096:8096/tcp" # HTTP
       # - "1900:1900/udp" # Auto-discovery
       # - "7359:7359/udp" # Auto-discovery
     restart: unless-stopped

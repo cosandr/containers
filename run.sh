@@ -184,8 +184,9 @@ run_up() {
             ex_code=2
             continue
         fi
-
-        if [[ -f $svc_path/docker-compose.yml ]]; then
+        if [[ $SWARM -eq 1 && -f $svc_path/docker-compose.swarm.yml ]]; then
+            compose_file="docker-compose.swarm.yml"
+        elif [[ -f $svc_path/docker-compose.yml ]]; then
             compose_file="docker-compose.yml"
         elif [[ -f $svc_path/docker-compose.yaml ]]; then
             compose_file="docker-compose.yaml"
@@ -215,7 +216,14 @@ run_up() {
             fi
         fi
         if [[ $SWARM -eq 1 ]]; then
-            run_cmd docker stack deploy --compose-file "$compose_file" "$name"
+            if [[ -f .env ]]; then
+                # https://github.com/moby/moby/issues/29133#issuecomment-278198683
+                # docker compose config fails for multiple reasons, missing version and wrong type for ports (wants int, gets str)
+                run_cmd env "$(grep '^[A-Z]' .env | xargs -d '\n')" docker stack deploy --with-registry-auth --compose-file "$compose_file" "$name"
+                # (set -a && source .env && set +a; run_cmd docker stack deploy -c "$compose_file" "$name")
+            else
+                run_cmd docker stack deploy --with-registry-auth --compose-file "$compose_file" "$name"
+            fi
         else
             run_cmd docker compose up -d ${containers[$name]}
         fi

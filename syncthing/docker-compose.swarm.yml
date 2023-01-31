@@ -8,12 +8,11 @@ networks:
   monitoring:
     external: true
   syncthing:
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
+    driver: ${C_NETWORK_DRIVER:-"overlay"}
 
 services:
   syncthing:
     image: syncthing/syncthing:latest
-    container_name: syncthing
     networks:
       - syncthing
     environment: *default-env
@@ -21,28 +20,28 @@ services:
       - ./data:/var/syncthing
       - ${C_MEDIA:?err}/photo:/sync/photo
     ports:
-      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8384:8384"
-      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:22000:22000/tcp"
-      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:22000:22000/udp"
-      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:21027:21027/udp"
-    restart: "always"
+      - "8384:8384/tcp"
+      - "22000:22000/tcp"
+      - "22000:22000/udp"
+      - "21027:21027/udp"
 
   syncthing_exporter:
     image: f100024/syncthing_exporter:latest
-    container_name: syncthing_exporter
     networks:
       - syncthing
       - monitoring
     depends_on:
       - syncthing
     ports:
-      - "${C_HOST_IPV4:?err}:22093:9093/tcp"
+      - target: 9093
+        published: 9093
+        protocol: tcp
+        mode: host
     environment:
       <<: *default-env
       SYNCTHING_URI: "http://syncthing:8384/"
       SYNCTHING_TOKEN: "${SYNCTHING_TOKEN:?err}"
       SYNCTHING_FOLDERSID: "ctkwt-teehm"
-    restart: "always"
-    labels:
-      - prometheus-instance=${C_PROMETHEUS_NAME:?err}
-      - prometheus-job=syncthing
+    deploy:
+      labels:
+        - prometheus-job=syncthing

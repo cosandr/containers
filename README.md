@@ -22,6 +22,7 @@ export C_TZ="$(timedatectl --value show -p Timezone)"
 export C_DOMAIN="example.com"
 export C_DOWNLOADS="$HOME/Downloads"
 export C_MEDIA="$HOME/Videos"
+export C_MEDIA_YES="$HOME/Yes"
 export C_WEB_ROOT="/var/www"
 export C_REGISTRY_BASE="registry.${C_DOMAIN}/cosandr/containers"
 export C_PG_HOST="10.0.10.11"
@@ -31,6 +32,9 @@ all_ips=$(ip -o addr show scope global "$primary_inet" | awk '{gsub(/\/.*/,"",$4
 export C_HOST_IPV4=$(awk 'NR==1' <<< "$all_ips")
 export C_HOST_IPV6=$(awk 'NR==2' <<< "$all_ips")
 export C_HOST_NET=$(ip route show scope link dev "$primary_inet" | cut -d' ' -f1)
+
+export C_PROMETHEUS_NAME="${C_HOSTNAME}"
+export C_PORT_BIND_ADDRESS="${C_HOST_IPV4}"
 
 unset primary_inet all_ips
 # Unset IPV6 if it doesn't exist
