@@ -10,7 +10,6 @@ networks:
 
 volumes:
   run-brains:
-  web-data:
 
 services:
   bot:
@@ -30,8 +29,8 @@ services:
       LAUNCHER_ARGS: "psql-config --env -e docker"
     volumes:
       - run-brains:/run/app
-      - web-data:/upload
-      - ./data:/data
+      - ./data/web:/upload
+      - ./data/bot:/data
       - ./src:/app
     restart: "always"
     depends_on:
@@ -55,8 +54,8 @@ services:
       LISTEN_ADDRESS: "/run/app/brains.sock"
     volumes:
       - run-brains:/run/app
-      - web-data:/upload
-      - ./data:/data
+      - ./data/web:/upload
+      - ./data/bot:/data
       - ./src-brains:/app
     restart: "always"
 
@@ -66,7 +65,7 @@ services:
       context: nginx
     container_name: mrbot-web
     volumes:
-      - web-data:/usr/share/nginx/html
+      - ./data/web:/usr/share/nginx/html
     networks:
       - mrbot
     ports:
