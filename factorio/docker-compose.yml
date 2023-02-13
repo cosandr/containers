@@ -26,3 +26,11 @@ services:
       INSTANCE_NAME: ${INSTANCE_NAME:?err}
       INSTANCE_DESC: ${INSTANCE_DESC:?err}
       INSTANCE_PASSWORD: ${INSTANCE_PASSWORD:?err}
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+      resources:
+        reservations:
+          cpus: '1.0'
+          memory: '10G'
