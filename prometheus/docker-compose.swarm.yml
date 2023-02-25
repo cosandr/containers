@@ -42,6 +42,10 @@ services:
       - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:9090:9090/tcp"
     networks:
       - monitoring
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
