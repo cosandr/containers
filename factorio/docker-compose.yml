@@ -11,7 +11,7 @@ services:
     container_name: factorio
     hostname: ${C_FACTORIO_NAME:-${C_HOSTNAME:?err}}
     network_mode: "bridge"
-    image: factoriotools/factorio:stable
+    image: factoriotools/factorio:1.1.76
     ports:
      - "34197:34197/udp"
 #     - "27015:27015/tcp"
