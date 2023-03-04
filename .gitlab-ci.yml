@@ -1,0 +1,112 @@
+---
+
+default:
+  image: docker:23
+  tags:
+    - docker-socket
+
+  before_script:
+    - apk add git
+    - git config --global url."https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}".insteadOf "git@github.com:${GITHUB_USER}"
+    - docker info
+    - echo "$CI_JOB_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - env | grep --color=never -E '^C\_'
+
+variables:
+  GIT_SUBMODULE_STRATEGY: "none"
+  C_REGISTRY_BASE: "$CI_REGISTRY_IMAGE"
+  C_TZ: "Europe/Oslo"
+  C_UID: "1000"
+  C_GID: "1000"
+  C_PG_HOST: "dummy"
+  C_DOMAIN: "dummy"
+
+stages:
+  - build
+
+build:mrbot:
+  stage: build
+  variables:
+    PG_PASS: "dummy"
+    C_BOT_TAG: "latest"
+  script:
+    - cd mrbot
+    - git submodule update --init -- src
+    - docker compose build --pull bot
+    - docker compose push bot
+    - |
+      tag="$(git -C src rev-parse --short HEAD)"
+      docker tag "${C_REGISTRY_BASE}/mrbot:${C_BOT_TAG}" "${C_REGISTRY_BASE}/mrbot:${tag}"
+      docker push "${C_REGISTRY_BASE}/mrbot:${tag}"
+      tag="$(git -C src tag --points-at HEAD | tail -n1)"
+      if [ -n "$tag" ]; then
+        docker tag "${C_REGISTRY_BASE}/mrbot:${C_BOT_TAG}" "${C_REGISTRY_BASE}/mrbot:${tag}"
+        docker push "${C_REGISTRY_BASE}/mrbot:${tag}"
+      fi
+
+  rules:
+    # Ensure job runs if triggered manually or by schedule
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - changes:
+      - '.gitlab-ci.yml'
+      - 'mrbot/bot.Dockerfile'
+      - 'mrbot/docker-compose.yml'
+      - 'mrbot/src'
+      - 'mrbot/files/root'
+      - 'mrbot/files/root-bot'
+
+build:mrbot-brains:
+  stage: build
+  variables:
+    PG_PASS: "dummy"
+    C_BRAINS_TAG: "latest"
+  script:
+    - cd mrbot
+    - git submodule update --init -- src-brains
+    - docker compose build --pull brains
+    - docker compose push brains
+    - |
+      tag="$(git -C src-brains rev-parse --short HEAD)"
+      docker tag "${C_REGISTRY_BASE}/mrbot-brains:${C_BRAINS_TAG}" "${C_REGISTRY_BASE}/mrbot-brains:${tag}"
+      docker push "${C_REGISTRY_BASE}/mrbot-brains:${tag}"
+      tag="$(git -C src-brains tag --points-at HEAD | tail -n1)"
+      if [ -n "$tag" ]; then
+        docker tag "${C_REGISTRY_BASE}/mrbot-brains:${C_BRAINS_TAG}" "${C_REGISTRY_BASE}/mrbot-brains:${tag}"
+        docker push "${C_REGISTRY_BASE}/mrbot-brains:${tag}"
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - changes:
+      - '.gitlab-ci.yml'
+      - 'mrbot/brains.Dockerfile'
+      - 'mrbot/docker-compose.yml'
+      - 'mrbot/src-brains'
+      - 'mrbot/files/root'
+      - 'mrbot/files/root-brains'
+
+build:mrbot-web:
+  stage: build
+  variables:
+    PG_PASS: "dummy"
+    C_WEB_TAG: "latest"
+  script:
+    - cd mrbot
+    - docker compose build --pull web
+    - docker compose push web
+    - |
+      docker tag "${C_REGISTRY_BASE}/mrbot-web:${C_WEB_TAG}" "${C_REGISTRY_BASE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
+      docker push "${C_REGISTRY_BASE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
+      tag="$(git tag --points-at HEAD | tail -n1)"
+      if [ -n "$tag" ]; then
+        docker tag "${C_REGISTRY_BASE}/mrbot-web:${C_WEB_TAG}" "${C_REGISTRY_BASE}/mrbot-web:${tag}"
+        docker push "${C_REGISTRY_BASE}/mrbot-web:${tag}"
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - changes:
+      - '.gitlab-ci.yml'
+      - 'mrbot/docker-compose.yml'
+      - 'mrbot/nginx'
