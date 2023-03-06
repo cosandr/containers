@@ -8,9 +8,9 @@ x-env: &default-env
 
 services:
   factorio:
-    container_name: factorio
     hostname: ${C_FACTORIO_NAME:-${C_HOSTNAME:?err}}
-    network_mode: "bridge"
+    stdin_open: true
+    tty: true
     image: factoriotools/factorio:1.1.76
     ports:
      - "34197:34197/udp"
