@@ -54,7 +54,7 @@
     "afk_autokick_interval": 0,
 
     "_comment_auto_pause": "Whether should the server be paused when no players are present.",
-    "auto_pause": false,
+    "auto_pause": true,
 
     "only_admins_can_pause_the_game": false,
 
