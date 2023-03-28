@@ -1,0 +1,34 @@
+---
+
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  valheim:
+    image: ghcr.io/lloesche/valheim-server:latest
+    cap_add:
+      - sys_nice
+    volumes:
+      - ./data/config:/config
+      - ./data/valheim:/opt/valheim
+    ports:
+      - "2456:2456/udp"  # Game
+      # - "2457:2457/udp"  # Steam Query
+    environment:
+      <<: *default-env
+      WORLD_NAME: "Dedicated"
+      SERVER_PUBLIC: "false"
+      SERVER_NAME: ${SERVER_NAME:?err}
+      SERVER_PASS: ${SERVER_PASS:?err}
+    stop_grace_period: 2m
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+      resources:
+        reservations:
+          cpus: '1.0'
+          memory: '4G'
