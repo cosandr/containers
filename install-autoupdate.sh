@@ -5,6 +5,11 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+exec_cmd="/usr/bin/bash run.sh up"
+if docker node ls &>/dev/null; then
+    exec_cmd="/usr/bin/bash run.sh update-swarm"
+fi
+
 unit_name="docker-auto-update"
 systemd_path="/etc/systemd/system"
 
@@ -33,7 +38,7 @@ Environment=HOSTNAME=$(hostname)
 Environment=BUSY=1
 Environment=BUILD=1
 Environment=PULL=1
-ExecStart=/usr/bin/bash run-all.sh
+ExecStart=$exec_cmd
 EOF
 
 systemctl daemon-reload

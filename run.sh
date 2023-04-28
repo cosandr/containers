@@ -175,6 +175,19 @@ run_common() {
     fi
 }
 
+check_busy() {
+    # Check for busy file
+    if [[ $BUSY -eq 1 && -f ./data/busy ]]; then
+        echo "$1 is busy, skipping"
+        return 0
+    fi
+    if [[ $BUSY -eq 1 && -f ./data/.lock ]]; then
+        echo "$1 is locked, skipping"
+        return 0
+    fi
+    return 1
+}
+
 run_up() {
     # Disable word-splitting warning, it's what we want
     # shellcheck disable=SC2086
@@ -195,13 +208,7 @@ run_up() {
             ex_code=2
             continue
         fi
-        # Check for busy file
-        if [[ $BUSY -eq 1 && -f ./data/busy ]]; then
-            echo "$name is busy, skipping"
-            continue
-        fi
-        if [[ $BUSY -eq 1 && -f ./data/.lock ]]; then
-            echo "$name is locked, skipping"
+        if check_busy "$name"; then
             continue
         fi
         if ! grep -qP '^\s+build:.*' "$compose_file"; then
@@ -283,6 +290,44 @@ run_push() {
     done
 }
 
+# Loosely based on https://github.com/containrrr/shepherd/blob/master/shepherd
+run_update_swarm() {
+    if ! command -v skopeo >/dev/null; then
+        echo "skopeo is required"
+        exit 1
+    fi
+    local name stack_name svc_path image image_with_digest digest
+    for name in $(IFS=$'\n' docker service ls --quiet --format '{{.Name}}'); do
+        stack_name="$(docker service inspect "$name" -f '{{index .Spec.Labels "com.docker.stack.namespace"}}')"
+        svc_path="$base_dir/$stack_name"
+        if ! cd "$svc_path"; then
+            ex_code=2
+            continue
+        fi
+        if check_busy "$stack_name"; then
+            continue
+        fi
+
+        image_with_digest="$(docker service inspect "$name" -f '{{.Spec.TaskTemplate.ContainerSpec.Image}}')"
+        image=$(echo "$image_with_digest" | cut -d@ -f1)
+        if [[ -z $image ]]; then
+            echo "skip $name: Cannot determine image"
+            ex_code=2
+            continue
+        fi
+        # Try to find current digest
+        digest="$(docker service ps "$name" --no-trunc --format '{{.Image}}' -f desired-state=running | head -n1 | cut -d@ -f2)"
+        if [[ -n $digest ]]; then
+            new_digest="$(skopeo inspect "docker://$image" --no-tags -f '{{.Digest}}')"
+            if [[ "$digest" == "$new_digest" ]]; then
+                echo "skip $name: No update required"
+                continue
+            fi
+        fi
+        run_cmd docker service update "$name" --force --with-registry-auth --image "$image"
+    done
+}
+
 case "$1" in
     up)
         run_common
@@ -291,6 +336,10 @@ case "$1" in
     push)
         run_common
         run_push
+        ;;
+    update-swarm)
+        run_common
+        run_update_swarm
         ;;
     *)
         echo "Unrecognized command: $1"
