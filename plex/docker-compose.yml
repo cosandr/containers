@@ -1,3 +1,5 @@
+---
+
 version: "3.7"
 x-env: &default-env
   TZ: ${C_TZ}
@@ -6,14 +8,18 @@ x-env: &default-env
 
 services:
   plex:
-    image: linuxserver/plex
-    container_name: plex
-    network_mode: "host"
+    image: linuxserver/plex:latest
     environment:
       <<: *default-env
       VERSION: "public"
     volumes:
-      - ./data/config:/config
-      - ./data/transcode:/transcode
-      - ${C_MEDIA:?err}:${C_MEDIA}
-    restart: "always"
+      - ./data:/config
+      - ${C_MEDIA:?err}:/tank/media:ro
+    ports:
+      - "32400:32400/tcp"
+    stop_grace_period: 2m
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+ 
