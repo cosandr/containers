@@ -31,4 +31,4 @@ services:
       resources:
         reservations:
           cpus: '1.0'
-          memory: '4G'
+          memory: '10G'
