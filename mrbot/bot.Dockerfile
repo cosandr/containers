@@ -1,5 +1,5 @@
 ARG PY_VER=3.10
-FROM python:${PY_VER} as builder
+FROM python:${PY_VER}-bullseye as builder
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -17,7 +17,7 @@ RUN python -m venv /opt/venv && \
     echo 'pip: install deps' && \
     pip install ${PIP_ARGS} -r /tmp/req.txt
 
-FROM python:${PY_VER}-slim
+FROM python:${PY_VER}-slim-bullseye
 
 ARG OVERLAY_VERSION="v2.2.0.3"
 

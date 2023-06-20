@@ -1,6 +1,6 @@
 ARG PY_VER=3.7
 
-FROM python:${PY_VER}
+FROM python:${PY_VER}-bullseye
 
 RUN apt-get update && \
     apt-get upgrade -y && \

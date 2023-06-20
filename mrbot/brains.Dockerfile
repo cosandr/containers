@@ -1,5 +1,5 @@
 ARG PY_VER=3.7
-FROM python:${PY_VER} as builder
+FROM python:${PY_VER}-bullseye as builder
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -21,7 +21,7 @@ RUN python -m venv /opt/venv && \
     pip install -i https://www.dresrv.com/pip \
         opencv-python-headless
 
-FROM python:${PY_VER}-slim
+FROM python:${PY_VER}-slim-bullseye
 
 ARG OVERLAY_VERSION="v2.2.0.3"
 
