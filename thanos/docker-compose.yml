@@ -4,7 +4,6 @@ x-env: &default-env
 
 networks:
   thanos:
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 services:
   query-frontend:

@@ -8,7 +8,6 @@ networks:
   monitoring:
     external: true
   syncthing:
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 services:
   syncthing:
@@ -36,7 +35,7 @@ services:
     depends_on:
       - syncthing
     ports:
-      - "${C_PORT_BIND_ADDRESS:?err}:22093:9093/tcp"
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:22093:9093/tcp"
     environment:
       <<: *default-env
       SYNCTHING_URI: "http://syncthing:8384/"

@@ -7,7 +7,6 @@ x-env: &default-env
 networks:
   promscale-net:
     name: promscale-net
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 services:
   db:

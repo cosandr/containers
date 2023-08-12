@@ -6,7 +6,6 @@ x-env: &default-env
 
 networks:
   mrbot:
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 services:
   bot:

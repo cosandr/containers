@@ -6,7 +6,6 @@ x-env: &default-env
 networks:
   monitoring:
     name: monitoring
-    driver: ${C_NETWORK_DRIVER:-"bridge"}
 
 volumes:
   prometheus-data: {}
