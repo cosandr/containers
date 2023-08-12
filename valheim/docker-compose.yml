@@ -15,8 +15,8 @@ services:
       - ./data/config:/config
       - ./data/valheim:/opt/valheim
     ports:
-      - "2456:2456/udp"  # Game
-      # - "2457:2457/udp"  # Steam Query
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:2456:2456/udp"  # Game
+      # - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:2457:2457/udp"  # Steam Query
     environment:
       <<: *default-env
       WORLD_NAME: "Dedicated"

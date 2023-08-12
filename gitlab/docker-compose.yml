@@ -73,7 +73,7 @@ services:
         registry_nginx['real_ip_trusted_addresses'] = ['${C_HOST_IPV4:?err}']
     ports:
       - '127.0.0.1:4522:80'    # Web
-      - '0.0.0.0:4523:22'      # SSH
+      - '${C_PORT_BIND_ADDRESS:-0.0.0.0}:4523:22'      # SSH
       - '127.0.0.1:5000:4524'  # Registry
     volumes:
       - './data/config:/etc/gitlab'

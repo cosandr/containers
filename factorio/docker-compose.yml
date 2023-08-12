@@ -14,8 +14,8 @@ services:
     # tty: true
     image: factoriotools/factorio:1.1.76
     ports:
-     - "34197:34197/udp"
-#     - "27015:27015/tcp"
+     - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:34197:34197/udp"
+#     - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:27015:27015/tcp"
     volumes:
      - ./data:/factorio
      - ./server-settings.json:/server-settings.json

@@ -18,6 +18,6 @@ services:
       - ${C_MEDIA_YES:?err}:/data/yes
     ports:
       - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8096:8096/tcp" # HTTP
-      # - "1900:1900/udp" # Auto-discovery
-      # - "7359:7359/udp" # Auto-discovery
+      # - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:1900:1900/udp" # Auto-discovery
+      # - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:7359:7359/udp" # Auto-discovery
     restart: unless-stopped

@@ -16,10 +16,9 @@ services:
       - ./data:/config
       - ${C_MEDIA:?err}:/tank/media:ro
     ports:
-      - "32400:32400/tcp"
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:32400:32400/tcp"
     stop_grace_period: 2m
     deploy:
       replicas: 1
       update_config:
         parallelism: 1
- 

@@ -62,12 +62,12 @@ services:
       - ./data/transmission:/config
       - ./scripts:/scripts:ro
     ports:
-      - "5800:5800" # firefox
-      - "8989:8989" # sonarr
-      - "9091:9091" # transmission
-      - "9696:9696" # prowlarr
-      # - "7878:7878" # radarr
-      # - "8686:8686" # lidarr
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:5800:5800" # firefox
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8989:8989" # sonarr
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:9091:9091" # transmission
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:9696:9696" # prowlarr
+      # - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:7878:7878" # radarr
+      # - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8686:8686" # lidarr
     restart: "always"
     security_opt:
       - label=disable  # podman

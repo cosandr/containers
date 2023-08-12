@@ -11,4 +11,4 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     ports:
-      - 8123:8123
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8123:8123"

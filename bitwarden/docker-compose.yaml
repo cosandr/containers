@@ -24,8 +24,8 @@ services:
       TZ: ${C_TZ}
       WEBSOCKET_ENABLED: "true"
     ports:
-      - 8343:8343/tcp
-      - 3012:3012/tcp
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:8343:8343/tcp"
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:3012:3012/tcp"
     volumes:
       - ./data:/data
     restart: "always"
