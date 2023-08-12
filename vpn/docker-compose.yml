@@ -22,7 +22,7 @@ services:
     container_name: vpn
     cap_add:
       - NET_ADMIN
-      - NET_RAW  # podman
+      # - NET_RAW  # podman
       # - MKNOD    # podman, if CREATE_TUN_DEVICE worked
     networks:
       - vpn
@@ -35,13 +35,13 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    devices:
-      # Required to avoid (podman)
-      # ERROR: Cannot open TUN/TAP dev /dev/net/tun: Operation not permitted (errno=1)
-      - "/dev/net/tun:/dev/net/tun"
+    # devices:
+    #   # Required to avoid (podman)
+    #   # ERROR: Cannot open TUN/TAP dev /dev/net/tun: Operation not permitted (errno=1)
+    #   - "/dev/net/tun:/dev/net/tun"
     environment:
       <<: *default-env
-      CREATE_TUN_DEVICE: "false"  # Set to true if on Docker
+      CREATE_TUN_DEVICE: "true"  # Set to true if on Docker
       ENABLE_UFW: "false"  # Can't get port forwarding to work
       LOCAL_NETWORK: "${C_HOST_NET:?err}"
       OPENVPN_CONFIG: "se.protonvpn.net.udp"
