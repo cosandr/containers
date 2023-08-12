@@ -6,7 +6,6 @@ x-env: &default-env
   PGID: ${C_GID}
 
 x-vpn-check: &vpn-check
-  test: "ping -c1 -W1 vpn"
   interval: 5m
   timeout: 10s
   retries: 3
@@ -30,11 +29,8 @@ services:
       - 8.8.8.8
       - 8.8.4.4
     healthcheck:
-      test: "ping -c1 -W1 google.com"
-      interval: 5m
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+      test: "ip address show dev tun0 | grep -q inet && ping -c1 -W1 google.com"
+      <<: *vpn-check
     # devices:
     #   # Required to avoid (podman)
     #   # ERROR: Cannot open TUN/TAP dev /dev/net/tun: Operation not permitted (errno=1)
@@ -76,7 +72,9 @@ services:
     image: docker.io/linuxserver/prowlarr:latest
     network_mode: "service:vpn"
     container_name: vpn-prowlarr
-    healthcheck: *vpn-check
+    healthcheck:
+      test: 'curl -o /dev/null -s -w "%{http_code}" localhost:9696/api/v1/health | grep -q 401'
+      <<: *vpn-check
     depends_on:
       - vpn
     environment:
@@ -92,7 +90,6 @@ services:
     image: docker.io/linuxserver/radarr:latest
     network_mode: "service:vpn"
     container_name: vpn-radarr
-    healthcheck: *vpn-check
     depends_on:
       - vpn
     environment:
@@ -111,7 +108,7 @@ services:
     network_mode: "service:vpn"
     container_name: vpn-sonarr
     healthcheck:
-      test: "nc -vz vpn 9091"
+      test: 'curl -o /dev/null -s -w "%{http_code}" localhost:8989/sonarr/api/v3/health | grep -q 401'
       <<: *vpn-check
     depends_on:
       - vpn
@@ -130,7 +127,6 @@ services:
     image: docker.io/linuxserver/lidarr:latest
     network_mode: "service:vpn"
     container_name: vpn-lidarr
-    healthcheck: *vpn-check
     depends_on:
       - vpn
     environment:
@@ -150,7 +146,6 @@ services:
     network_mode: "service:vpn"
     depends_on:
       - vpn
-    healthcheck: *vpn-check
     environment:
       TZ: ${C_TZ}
       USER_ID: ${C_UID}
