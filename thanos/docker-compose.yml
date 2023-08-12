@@ -1,0 +1,68 @@
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+
+networks:
+  thanos:
+    driver: ${C_NETWORK_DRIVER:-"bridge"}
+
+services:
+  query-frontend:
+    image: quay.io/thanos/thanos:v0.31.0
+    command:
+      - 'query-frontend'
+      - '--log.level=info'
+      - '--http-address=0.0.0.0:10902'
+      - '--query-frontend.downstream-url=http://querier:10902'
+    environment: *default-env
+    networks:
+      - thanos
+    ports:
+      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:10902:10902/tcp"
+    depends_on:
+      - querier
+
+  querier:
+    image: quay.io/thanos/thanos:v0.31.0
+    command:
+      - 'query'
+      - '--log.level=info'
+      - '--grpc-address=0.0.0.0:10091'
+      - '--http-address=0.0.0.0:10902'
+      - '--query.replica-label=replica'
+      - '--store=${C_PROM_HOST:?err}:10901'
+      - '--store=store-gateway:10091'
+    environment: *default-env
+    networks:
+      - thanos
+
+  store-gateway:
+    image: quay.io/thanos/thanos:v0.31.0
+    volumes:
+      - ./data/bucket_config.yaml:/etc/thanos/bucket_config.yaml:ro
+      - ./data/store-gw:/data
+    command:
+      - 'store'
+      - '--log.level=info'
+      - '--grpc-address=0.0.0.0:10091'
+      - '--http-address=0.0.0.0:10902'
+      - '--data-dir=/data'
+      - '--objstore.config-file=/etc/thanos/bucket_config.yaml'
+    environment: *default-env
+    networks:
+      - thanos
+
+  compactor:
+    image: quay.io/thanos/thanos:v0.31.0
+    volumes:
+      - ./data/bucket_config.yaml:/etc/thanos/bucket_config.yaml:ro
+      - ./data/compact:/data
+    command:
+      - 'compact'
+      - '--log.level=info'
+      - '--data-dir=/data'
+      - '--objstore.config-file=/etc/thanos/bucket_config.yaml'
+      - '--wait'
+    environment: *default-env
+    networks:
+      - thanos
