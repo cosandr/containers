@@ -12,7 +12,8 @@ services:
     ## Breaks promtail
     # stdin_open: true
     # tty: true
-    image: factoriotools/factorio:1.1.76
+    container_name: factorio
+    image: factoriotools/factorio:stable
     ports:
      - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:34197:34197/udp"
 #     - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:27015:27015/tcp"
