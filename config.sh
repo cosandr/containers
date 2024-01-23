@@ -1,7 +1,6 @@
 containers["jellyfin"]=""
 containers["mrbot"]=""
 containers["syncthing"]=""
-containers["factorio"]=""
 containers["prometheus"]=""
 containers["portainer"]=""
 containers["plex"]=""
