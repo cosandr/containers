@@ -69,7 +69,7 @@ services:
       - label=disable  # podman
 
   prowlarr:
-    image: docker.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:latest
     network_mode: "service:vpn"
     container_name: vpn-prowlarr
     healthcheck:
@@ -77,6 +77,7 @@ services:
       <<: *vpn-check
     depends_on:
       - vpn
+      - flaresolverr
     environment:
       <<: *default-env
       UMASK_SET: "022"
@@ -86,8 +87,24 @@ services:
     security_opt:
       - label=disable  # podman
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    network_mode: "service:vpn"
+    container_name: vpn-flaresolverr
+    healthcheck:
+      test: 'curl -o /dev/null -s -w "%{http_code}" localhost:8191/api/v1/health | grep -q 401'
+      <<: *vpn-check
+    depends_on:
+      - vpn
+    environment:
+      <<: *default-env
+      LOG_LEVEL: "info"
+    restart: "always"
+    security_opt:
+      - label=disable  # podman
+
   radarr:
-    image: docker.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:latest
     network_mode: "service:vpn"
     container_name: vpn-radarr
     depends_on:
@@ -104,7 +121,7 @@ services:
       - label=disable  # podman
 
   sonarr:
-    image: docker.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:latest
     network_mode: "service:vpn"
     container_name: vpn-sonarr
     healthcheck:
@@ -124,7 +141,7 @@ services:
       - label=disable  # podman
 
   lidarr:
-    image: docker.io/linuxserver/lidarr:latest
+    image: lscr.io/linuxserver/lidarr:latest
     network_mode: "service:vpn"
     container_name: vpn-lidarr
     depends_on:
