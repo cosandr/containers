@@ -40,7 +40,7 @@ services:
       CREATE_TUN_DEVICE: "true"  # Set to true if on Docker
       ENABLE_UFW: "false"  # Can't get port forwarding to work
       LOCAL_NETWORK: "${C_HOST_NET:?err}"
-      OPENVPN_CONFIG: "se.protonvpn.net.udp"
+      OPENVPN_CONFIG: "se.protonvpn.udp"
       OPENVPN_OPTS: "--inactive 3600 --ping 10 --ping-exit 60"
       # https://haugene.github.io/docker-transmission-openvpn/faq/#send_username_and_password_via_a_file
       # Place username (add +pmp) and password in /config/openvpn-credentials.txt, one per line
