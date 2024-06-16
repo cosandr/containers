@@ -1,7 +1,5 @@
 ---
 
-version: "3.7"
-
 services:
   node:
     image: prom/node-exporter:latest

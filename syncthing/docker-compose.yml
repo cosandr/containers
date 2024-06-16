@@ -1,4 +1,5 @@
-version: "3.7"
+---
+
 x-env: &default-env
   TZ: ${C_TZ}
   PUID: ${C_UID}
