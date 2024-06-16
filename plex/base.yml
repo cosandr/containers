@@ -14,7 +14,8 @@ services:
       <<: *default-env
       VERSION: "public"
     volumes:
-      - ./data:/config
+      - ./data/config:/config
+      - ./data/transcode:/transcode
     stop_grace_period: 2m
     deploy:
       replicas: 1

@@ -8,7 +8,6 @@ services:
       file: base.yml
       service: plex
     volumes:
-      - ./data/transcode:/transcode
       - /mnt/user/video:/media/video
       - /mnt/user/photo:/media/photo
       - /mnt/user/archive/Music:/media/music
