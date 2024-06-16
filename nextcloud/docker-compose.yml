@@ -4,16 +4,64 @@ x-env: &default-env
   PUID: ${C_UID}
   PGID: ${C_GID}
 
+networks:
+  nextcloud:
+    driver: bridge
+
 services:
   nextcloud:
-    image: ghcr.io/linuxserver/nextcloud
-    network_mode: "bridge"
+    image: "ghcr.io/linuxserver/nextcloud:29.0.2"
+    networks:
+      - nextcloud
     container_name: nextcloud
-    hostname: cloud.${C_DOMAIN:?err}
-    environment: *default-env
+    hostname: "${NEXTCLOUD_HOSTNAME:?err}"
+    environment:
+      <<: *default-env
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: "${NEXTCLOUD_PGPASS:?err}"
+      POSTGRES_HOST: db
     volumes:
-      - ./data/data:/data
-      - ./data/config:/config
+      - ./data/nextcloud-data:/data
+      - ./data/nextcloud-config:/config
+      - /mnt/user/archive:/unraid/archive
+      - /mnt/user/photo:/unraid/photo
+      - /mnt/user/romeo:/unraid/romeo
+      - /mnt/user/synology:/unraid/synology
+      - /mnt/user/video:/unraid/video
     ports:
-      - "127.0.0.1:25683:443"
+      - "25683:443"
     restart: "always"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    container_name: nextcloud_db
+    restart: always
+    environment:
+      TZ: ${C_TZ}
+      POSTGRES_USER: "nextcloud"
+      POSTGRES_PASSWORD: "${NEXTCLOUD_PGPASS:?err}"
+    networks:
+      - nextcloud
+    volumes:
+      - ./data/postgres16-data:/var/lib/postgresql/data
+
+  exporter:
+    image: "ghcr.io/xperimental/nextcloud-exporter:latest"
+    networks:
+      - nextcloud
+    container_name: nextcloud_exporter
+    restart: always
+    user: "${C_UID:?err}"
+    environment:
+      TZ: ${C_TZ}
+      NEXTCLOUD_SERVER: "https://${NEXTCLOUD_HOSTNAME:?err}"
+      NEXTCLOUD_AUTH_TOKEN: "${NEXTCLOUD_AUTH_TOKEN:?err}"
+      # It's connecting directly, skipping the proxy with the trusted certificate
+      NEXTCLOUD_TLS_SKIP_VERIFY: "true"
+    depends_on:
+      - nextcloud
+    ports:
+      - "${C_HOST_WG_IPV4:?err}:9205:9205/tcp"

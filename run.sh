@@ -4,12 +4,12 @@ set -o pipefail -o noclobber -o nounset
 
 ! getopt --test > /dev/null
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-    echo '`getopt --test` failed in this environment.'
+    echo "'getopt --test' failed in this environment."
     exit 1
 fi
 
-OPTIONS=h,a,n,c:,e:
-LONGOPTS=help,all,dry-run,config-file:,env-file:,name:,no-build,no-pull,no-busy,no-swarm
+OPTIONS=h,a,n,c:,e:,p:
+LONGOPTS=help,all,dry-run,config-file:,env-file:,preset:,name:,no-build,no-pull,no-busy,no-swarm
 
 ! PARSED=$(getopt --options=${OPTIONS} --longoptions=${LONGOPTS} --name "$0" -- "$@")
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
@@ -23,17 +23,35 @@ if docker node ls &>/dev/null; then
     _swarm_default=1
 fi
 
+_preset_default=""
+_preset_help=""
+if [[ -f .preset ]]; then
+    _preset_default=$(<.preset)
+    _preset_help="[$_preset_default] (.preset)"
+fi
+
 ex_code=0
 base_dir="$(pwd -P)"
-DRY_RUN=${DRY_RUN:-0}
 BUILD=${BUILD:-1}
-PULL=${PULL:-1}
 BUSY=${BUSY:-1}
-SWARM=${SWARM:-$_swarm_default}
-RUN_ALL=${RUN_ALL:-0}
-CONFIG_FILE=${CONFIG_FILE:-"config.sh"}
-ENV_FILE=${ENV_FILE:-"env.sh"}
+DRY_RUN=${DRY_RUN:-0}
 NAMES=${NAMES:-}
+PRESET=${PRESET:-$_preset_default}
+PULL=${PULL:-1}
+RUN_ALL=${RUN_ALL:-0}
+SWARM=${SWARM:-$_swarm_default}
+
+_config_default="config.sh"
+_env_default="env.sh"
+if [[ -n "$PRESET" ]]; then
+    [[ -f "config.$PRESET.sh" ]] && _config_default="config.$PRESET.sh"
+    [[ -f "env.$PRESET.sh" ]] && _env_default="env.$PRESET.sh"
+fi
+
+CONFIG_FILE=${CONFIG_FILE:-$_config_default}
+ENV_FILE=${ENV_FILE:-$_env_default}
+
+unset _swarm_default _preset_default _config_default _env_default
 # key: folder name
 # value: space seperated list of services, starts all if empty
 declare -A containers=()
@@ -52,6 +70,7 @@ Options:
 -n    --dry-run         Don't make changes, print commands that would be run
 -c    --config-file     Path to config file [$CONFIG_FILE]
 -e    --env-file        Path to env file [$ENV_FILE]
+-p    --preset          Preset name to use $_preset_help
       --name            Provide comma seperated container names to operate on
       --no-build        Don't build images
       --no-pull         Don't pull updated images
@@ -81,6 +100,13 @@ while true; do
         -e|--env-file)
             ENV_FILE="$2"
             shift 2
+            ;;
+        -p|--preset)
+            PRESET="$2"
+            shift 2
+            _preset_help="[$PRESET]"
+            [[ -f "config.$PRESET.sh" ]] && CONFIG_FILE="config.$PRESET.sh" || CONFIG_FILE="config.sh"
+            [[ -f "env.$PRESET.sh" ]] && ENV_FILE="env.$PRESET.sh" || ENV_FILE="env.sh"
             ;;
         --name)
             NAMES="$2"
@@ -112,6 +138,8 @@ while true; do
             ;;
     esac
 done
+
+unset _preset_help
 
 if [[ $# -ne 1 ]]; then
     echo "$0: A command is required."
@@ -175,6 +203,21 @@ run_common() {
     fi
 }
 
+find_compose_file() {
+    if [[ -n $PRESET && -f "$svc_path/docker-compose.$PRESET.yml" ]]; then
+        compose_file="docker-compose.$PRESET.yml"
+    elif [[ -n $PRESET && -f "$svc_path/docker-compose.$PRESET.yaml" ]]; then
+        compose_file="docker-compose.$PRESET.yaml"
+    elif [[ -f $svc_path/docker-compose.yml ]]; then
+        compose_file="docker-compose.yml"
+    elif [[ -f $svc_path/docker-compose.yaml ]]; then
+        compose_file="docker-compose.yaml"
+    else
+        echo "$name no compose file"
+        return 1
+    fi
+}
+
 check_busy() {
     # Check for busy file
     if [[ $BUSY -eq 1 && -f ./data/busy ]]; then
@@ -197,14 +240,7 @@ run_up() {
             ex_code=2
             continue
         fi
-        if [[ $SWARM -eq 1 && -f $svc_path/docker-compose.swarm.yml ]]; then
-            compose_file="docker-compose.swarm.yml"
-        elif [[ -f $svc_path/docker-compose.yml ]]; then
-            compose_file="docker-compose.yml"
-        elif [[ -f $svc_path/docker-compose.yaml ]]; then
-            compose_file="docker-compose.yaml"
-        else
-            echo "$name no compose file"
+        if ! find_compose_file; then
             ex_code=2
             continue
         fi
@@ -213,13 +249,13 @@ run_up() {
         fi
         if ! grep -qP '^\s+build:.*' "$compose_file"; then
             if [[ $PULL -eq 1 ]]; then
-                run_cmd docker compose pull ${containers[$name]}
+                run_cmd docker compose -f "$compose_file" pull ${containers[$name]}
             fi
         elif [[ $BUILD -eq 1 ]]; then
             if [[ $PULL -eq 1 ]]; then
-                run_cmd docker compose build --pull ${containers[$name]}
+                run_cmd docker compose -f "$compose_file" build --pull ${containers[$name]}
             else
-                run_cmd docker compose build ${containers[$name]}
+                run_cmd docker compose -f "$compose_file" build ${containers[$name]}
             fi
         fi
         if [[ $SWARM -eq 1 ]]; then
@@ -232,7 +268,7 @@ run_up() {
                 run_cmd docker stack deploy --with-registry-auth --compose-file "$compose_file" "$name"
             fi
         else
-            run_cmd docker compose up -d ${containers[$name]}
+            run_cmd docker compose -f "$compose_file" up -d ${containers[$name]}
         fi
 
     done
@@ -252,12 +288,7 @@ run_push() {
             continue
         fi
 
-        if [[ -f $svc_path/docker-compose.yml ]]; then
-            compose_file="docker-compose.yml"
-        elif [[ -f $svc_path/docker-compose.yaml ]]; then
-            compose_file="docker-compose.yaml"
-        else
-            echo "$name no compose file"
+        if ! find_compose_file; then
             ex_code=2
             continue
         fi
@@ -280,13 +311,13 @@ run_push() {
         echo "build $tag"
         if [[ $BUILD -eq 1 ]]; then
             if [[ $PULL -eq 1 ]]; then
-                run_cmd docker compose build --pull
+                run_cmd docker compose -f "$compose_file" build --pull
             else
-                run_cmd docker compose build
+                run_cmd docker compose -f "$compose_file" build
             fi
         fi
         echo "push $tag"
-        run_cmd docker compose push
+        run_cmd docker compose -f "$compose_file" push
     done
 }
 

@@ -1,0 +1,19 @@
+version: "3.7"
+
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    network_mode: host
+    environment:
+      <<: *default-env
+      STGUIADDRESS: "0.0.0.0:8384"
+    volumes:
+      - ./data:/var/syncthing
+      - /mnt/user/photo:/sync/photo
+    restart: "always"

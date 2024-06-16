@@ -5,6 +5,7 @@ lost+found
 env.sh
 env.*.sh
 .env
+.preset
 
 # Editor files
 .vscode/settings.json

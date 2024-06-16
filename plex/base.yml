@@ -1,0 +1,22 @@
+---
+
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    environment:
+      <<: *default-env
+      VERSION: "public"
+    volumes:
+      - ./data:/config
+    stop_grace_period: 2m
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1

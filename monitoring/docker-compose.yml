@@ -1,0 +1,55 @@
+---
+
+version: "3.7"
+
+services:
+  node:
+    image: prom/node-exporter:latest
+    container_name: node
+    hostname: "${C_HOSTNAME}"
+    user: "${C_UID:-1000}:${C_GID:-1000}"
+    network_mode: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.bcache'
+      - '--no-collector.textfile'
+      - '--no-collector.xfs'
+      - '--no-collector.zfs'
+      - '--no-collector.mdadm'
+      - '--no-collector.nvme'
+      - '--no-collector.powersupplyclass'
+      - '--no-collector.arp'
+      - '--web.listen-address=${C_HOST_IPV4:?err}:9100'
+    restart: always
+
+  smartctl-exporter:
+    image: matusnovak/prometheus-smartctl:latest
+    container_name: smartctl-exporter
+    hostname: "${C_HOSTNAME}"
+    privileged: true
+    ports:
+      - "${C_HOST_IPV4:?err}:9902:9902"
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: cadvisor
+    hostname: "${C_HOSTNAME}"
+    network_mode: host
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    command:
+      - '--docker_only'
+      - '--listen_ip=${C_HOST_IPV4:?err}'
+      - '--port=9101'
+    restart: always

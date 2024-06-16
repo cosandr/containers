@@ -1,0 +1,19 @@
+---
+
+version: "3.7"
+x-env: &default-env
+  TZ: ${C_TZ}
+  PUID: ${C_UID}
+  PGID: ${C_GID}
+
+services:
+  an:
+    image: lscr.io/linuxserver/duckdns:latest
+    network_mode: host
+    container_name: ddns-an
+    environment:
+      <<: *default-env
+      SUBDOMAINS: "${AN_SUBDOMAINS:?err}"
+      TOKEN: "${TOKEN:?err}"
+      # UPDATE_IP: "both"  # Don't have IPv6
+    restart: "always"

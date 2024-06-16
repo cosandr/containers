@@ -1,24 +1,13 @@
 ---
 
 version: "3.7"
-x-env: &default-env
-  TZ: ${C_TZ}
-  PUID: ${C_UID}
-  PGID: ${C_GID}
 
 services:
   plex:
-    image: linuxserver/plex:latest
-    environment:
-      <<: *default-env
-      VERSION: "public"
+    extends:
+      file: base.yml
+      service: plex
     volumes:
-      - ./data:/config
       - ${C_MEDIA:?err}:/tank/media:ro
     ports:
       - "${C_PORT_BIND_ADDRESS:-0.0.0.0}:32400:32400/tcp"
-    stop_grace_period: 2m
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
