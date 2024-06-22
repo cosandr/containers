@@ -28,12 +28,12 @@ services:
     restart: always
 
   smartctl-exporter:
-    image: matusnovak/prometheus-smartctl:latest
+    image: prometheuscommunity/smartctl-exporter:latest
     container_name: smartctl-exporter
     hostname: "${C_HOSTNAME}"
     privileged: true
     ports:
-      - "${C_HOST_IPV4:?err}:9902:9902"
+      - "${C_HOST_IPV4:?err}:9633:9633"
     restart: unless-stopped
 
   cadvisor:
