@@ -32,6 +32,7 @@ services:
     container_name: smartctl-exporter
     hostname: "${C_HOSTNAME}"
     privileged: true
+    user: root
     ports:
       - "${C_HOST_IPV4:?err}:9633:9633"
     restart: unless-stopped
