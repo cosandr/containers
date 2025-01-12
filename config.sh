@@ -1,4 +1,3 @@
-containers["jellyfin"]=""
 containers["mrbot"]=""
 containers["prometheus"]=""
 containers["portainer"]=""

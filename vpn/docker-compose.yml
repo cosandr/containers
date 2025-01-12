@@ -23,6 +23,8 @@ services:
       - NET_ADMIN
       # - NET_RAW  # podman
       # - MKNOD    # podman, if CREATE_TUN_DEVICE worked
+    devices:
+      - /dev/net/tun
     networks:
       - vpn
     dns:
