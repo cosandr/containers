@@ -52,3 +52,16 @@ services:
       - '--listen_ip=${C_HOST_IPV4:?err}'
       - '--port=9101'
     restart: always
+
+  scrutiny:
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    container_name: scrutiny
+    hostname: "${C_HOSTNAME}"
+    privileged: true
+    volumes:
+      - ./data/config:/opt/scrutiny/config
+      - ./data/influxdb:/opt/scrutiny/influxdb
+    ports:
+      - "${C_HOST_IPV4:?err}:8080:8080" # webapp
+      # - "${C_HOST_IPV4:?err}:8086:8086" # influxDB admin
+    restart: unless-stopped
