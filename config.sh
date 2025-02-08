@@ -1,5 +1,4 @@
 containers["mrbot"]=""
 containers["prometheus"]=""
 containers["portainer"]=""
-containers["plex"]=""
 containers["vpn"]="vpn sonarr prowlarr"
