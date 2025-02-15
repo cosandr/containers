@@ -11,7 +11,7 @@ networks:
 
 services:
   nextcloud:
-    image: "ghcr.io/linuxserver/nextcloud:29.0.12"
+    image: "ghcr.io/linuxserver/nextcloud:29.0.12-previous"
     networks:
       - nextcloud
     container_name: nextcloud
