@@ -10,12 +10,7 @@ networks:
 
 services:
   bot:
-    image: ${C_REGISTRY_BASE:?err}/mrbot:${C_BOT_TAG:-latest}
-    build:
-      context: .
-      dockerfile: bot.Dockerfile
-      args:
-        PY_VER: "3.10"
+    image: ${C_REGISTRY_BASE:?err}/andrei/mrbot:${C_BOT_TAG:-latest}
     container_name: mrbot
     networks:
       - mrbot
@@ -27,18 +22,12 @@ services:
     volumes:
       - ./data/web:/upload
       - ./data/bot:/data
-      - ./src:/app
     restart: "always"
     depends_on:
       - brains
 
   brains:
-    image: ${C_REGISTRY_BASE:?err}/mrbot-brains:${C_BRAINS_TAG:-latest}
-    build:
-      context: .
-      dockerfile: brains.Dockerfile
-      args:
-        PY_VER: 3.8
+    image: ${C_REGISTRY_BASE:?err}/andrei/mrbot-brains:${C_BRAINS_TAG:-latest}
     container_name: mrbot-brains
     networks:
       - mrbot
@@ -51,11 +40,10 @@ services:
     volumes:
       - ./data/web:/upload
       - ./data/bot:/data
-      - ./src-brains:/app
     restart: "always"
 
   web:
-    image: ${C_REGISTRY_BASE:?err}/mrbot-web:${C_WEB_TAG:-latest}
+    image: ${C_REGISTRY_BASE:?err}/andrei/containers/mrbot-web:${C_WEB_TAG:-latest}
     build:
       context: nginx
     container_name: mrbot-web

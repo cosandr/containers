@@ -24,7 +24,7 @@ export C_DOWNLOADS="$HOME/Downloads"
 export C_MEDIA="$HOME/Videos"
 export C_MEDIA_YES="$HOME/Yes"
 export C_WEB_ROOT="/var/www"
-export C_REGISTRY_BASE="registry.${C_DOMAIN}/cosandr/containers"
+export C_REGISTRY_BASE="registry.${C_DOMAIN}"
 export C_PG_HOST="10.0.10.11"
 
 primary_inet=$(route | grep '^default' | grep -m 1 -o '[^ ]*$')

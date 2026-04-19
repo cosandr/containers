@@ -1,6 +1,0 @@
-[submodule "mrbot/src"]
-	path = mrbot/src
-	url = git@github.com:cosandr/mrbot.git
-[submodule "mrbot/src-brains"]
-	path = mrbot/src-brains
-	url = git@github.com:cosandr/mrbot-brains.git
