@@ -146,12 +146,12 @@ if [[ $# -ne 1 ]]; then
     exit 4
 fi
 
-trap 'exit $ex_code' EXIT
-
 if [[ ! -f $ENV_FILE ]]; then
     echo "Env file '$ENV_FILE' not found"
     exit 1
 fi
+
+trap 'exit $ex_code' EXIT
 
 # shellcheck source=env.sh disable=SC1091
 source "$ENV_FILE" || exit 1
