@@ -1,5 +1,3 @@
-containers["duck-ddns"]="an"
 containers["monitoring"]=""
-containers["nextcloud"]=""
 containers["plex"]=""
 containers["syncthing"]=""
