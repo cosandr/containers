@@ -14,7 +14,7 @@ default:
 
 variables:
   GIT_SUBMODULE_STRATEGY: "none"
-  C_REGISTRY_BASE: "$CI_REGISTRY_IMAGE"
+  C_REGISTRY_BASE: "$CI_REGISTRY"
   C_TZ: "Europe/Oslo"
   C_UID: "1000"
   C_GID: "1000"
@@ -34,12 +34,12 @@ build:mrbot-web:
     - docker compose build --pull web
     - docker compose push web
     - |
-      docker tag "${C_REGISTRY_BASE}/mrbot-web:${C_WEB_TAG}" "${C_REGISTRY_BASE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
-      docker push "${C_REGISTRY_BASE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
+      docker tag "${CI_REGISTRY_IMAGE}/mrbot-web:${C_WEB_TAG}" "${CI_REGISTRY_IMAGE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
+      docker push "${CI_REGISTRY_IMAGE}/mrbot-web:${CI_COMMIT_SHORT_SHA}"
       tag="$(git tag --points-at HEAD | tail -n1)"
       if [ -n "$tag" ]; then
-        docker tag "${C_REGISTRY_BASE}/mrbot-web:${C_WEB_TAG}" "${C_REGISTRY_BASE}/mrbot-web:${tag}"
-        docker push "${C_REGISTRY_BASE}/mrbot-web:${tag}"
+        docker tag "${CI_REGISTRY_IMAGE}/mrbot-web:${C_WEB_TAG}" "${CI_REGISTRY_IMAGE}/mrbot-web:${tag}"
+        docker push "${CI_REGISTRY_IMAGE}/mrbot-web:${tag}"
       fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
