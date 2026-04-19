@@ -4,12 +4,3 @@
 [submodule "mrbot/src-brains"]
 	path = mrbot/src-brains
 	url = git@github.com:cosandr/mrbot-brains.git
-[submodule "twitch/src"]
-	path = twitch/src
-	url = git@github.com:cosandr/twitch-vods.git
-[submodule "tfbuild/src"]
-	path = tfbuild/src
-	url = https://github.com/tensorflow/tensorflow.git
-[submodule "elk"]
-	path = elk
-	url = git@github.com:cosandr/docker-elk.git
